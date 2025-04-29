@@ -49,7 +49,6 @@ const Game: React.FC = () => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
   });
 
-  console.log(import.meta.env.VITE_GOOGLE_MAPS_API)
   const [shuffledImages, setShuffledImages] = useState(() => shuffleArray(images));
   const [round, setRound] = useState(0);
   const [guess, setGuess] = useState<{ lat: number; lng: number } | null>(null);
