@@ -33,7 +33,7 @@ const HomePage = () => (
             showThumbnails = {false}
         />
         <h2>
-            How to play (Carl Hu edition):
+            How to play:
         </h2>
         <p>During each round of play, you will be shown a picture of a spot on Cornell's campus. 
             Use the maps feature to select where you think it is.
