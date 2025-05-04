@@ -80,7 +80,7 @@ const Game: React.FC = () => {
   };
 
   const calculateScore = (distance: number) => {
-    const decayRate = 0.9; // change this for faster/slower decay
+    const decayRate = 0.95; // change this for faster/slower decay
     return Math.round(1000 * Math.exp(-distance / decayRate));
   };
 

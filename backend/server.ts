@@ -7,7 +7,6 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-// In-memory storage for demo
 const guesses: { userId: string; lat: number; lng: number; timestamp: number }[] = [];
 
 // GET: Fetch all guesses
