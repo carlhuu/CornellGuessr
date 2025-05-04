@@ -115,7 +115,12 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
                 <Group spacing={5} className={classes.links}>
                     {items}
                 </Group>
-               
+                <Burger
+                    opened={opened}
+                    onClick={toggle}
+                    className={classes.burger}
+                    size='sm'
+                />
                 <div style={{ width:"44vw", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}> 
                     { isLog && <p className= "center" >Hello, {user?.displayName}</p>}
                     <button onClick={handleLoginClick}>
