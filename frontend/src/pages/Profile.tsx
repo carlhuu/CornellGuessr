@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useAuth } from "../auth/AuthUserProvider";
 
 type Props = {name: string; img: string; val: number};
 
@@ -16,11 +17,13 @@ const StatBox = (props: Props) => (
     </div>
 );
 
-const Profile = () => (
+export function Profile() {
+    const { user } = useAuth();
+    return (
     <div>
         <center>
             <h1 className = "profile_header">
-                Username
+                {user?.displayName ? user.displayName : "Sign in to view profile"}
             </h1>
             <img className = "profile_img" src = {p1}/>
         </center>
@@ -31,7 +34,7 @@ const Profile = () => (
                     <StatBox 
                         name = {"Games Played"} 
                         img = {"/src/assets/profile/crown.png"} 
-                        val = {10} 
+                        val = {0} 
                     />
                 </Col>
                 <Col>
@@ -50,8 +53,7 @@ const Profile = () => (
                 </Col>
             </Row>
         </Container>
+    </div> 
+    );
+}
 
-    </div>
-);
-
-export default Profile;

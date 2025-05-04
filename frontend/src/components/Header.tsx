@@ -121,7 +121,7 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
                     className={classes.burger}
                     size='sm'
                 />
-                <div style={{ width:"44vw", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}> 
+                <div style={{ width:"40vw", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}> 
                     { isLog && <p className= "center" >Hello, {user?.displayName}</p>}
                     <button onClick={handleLoginClick}>
                         {isLog ? "Sign out" : "Log in"}

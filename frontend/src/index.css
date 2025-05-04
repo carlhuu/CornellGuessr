@@ -16,6 +16,17 @@ html {
     margin: 0;
 }
 
+.padded-vert {
+    padding-bottom: 2%;
+    padding-top: 2%;
+}
+
+.play-game {
+    padding-bottom: 5%;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
 .submitBtn {
     background-color: #04AA6D; /* Green */
     border: none;
