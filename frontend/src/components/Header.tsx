@@ -10,6 +10,9 @@ import {
 import { useDisclosure } from "@mantine/hooks";
 import { ArrowUpCircle } from "lucide-react";
 import { Link } from "react-router-dom";
+import { signIn, signOut } from "../auth/auth";
+import { useAuth } from "../auth/AuthUserProvider";
+
 
 const useStyles = createStyles((theme) => ({
     header: {
@@ -89,7 +92,21 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
         >
             {link.label}
         </Link>
+        
     ));
+
+    const [isLog, setIsLog] = useState<boolean>(false);
+    const { user } = useAuth();
+  
+  
+    const handleLoginClick = async () => {
+      if (isLog) {
+        await signOut();
+      } else {
+        await signIn();
+      }
+      setIsLog(!isLog);
+    };
 
     return (
         <Header height={60}>
@@ -98,12 +115,13 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
                 <Group spacing={5} className={classes.links}>
                     {items}
                 </Group>
-                <Burger
-                    opened={opened}
-                    onClick={toggle}
-                    className={classes.burger}
-                    size='sm'
-                />
+               
+                <div style={{ width:"44vw", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}> 
+                    { isLog && <p className= "center" >Hello, {user?.displayName}</p>}
+                    <button onClick={handleLoginClick}>
+                        {isLog ? "Sign out" : "Log in"}
+                    </button>
+                </div>
             </Container>
         </Header>
     );
