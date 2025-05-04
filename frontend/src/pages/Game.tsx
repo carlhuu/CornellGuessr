@@ -131,11 +131,13 @@ const Game: React.FC = () => {
         {showResult && <Marker position={currentImage.location} />}
       </GoogleMap>
 
-      {!showResult && guess && (
-        <button onClick={submitGuessToBackend}>
+      <center>{!showResult && guess && (
+        <button className = "submitBtn" onClick={submitGuessToBackend}>
           Submit Guess
         </button>
-      )}
+      )} {!showResult && !guess && (<button className = "submitBtn disabled" onClick={submitGuessToBackend}>
+        Submit Guess
+      </button>)}</center>
 
       {showResult && (
         <div>
