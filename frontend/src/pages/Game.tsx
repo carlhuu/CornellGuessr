@@ -51,12 +51,13 @@ const Game: React.FC = () => {
   });
 
   const [shuffledImages, setShuffledImages] = useState(() => shuffleArray(images));
-  const [round, setRound] = useState(0);
+  const [round, setRound] = useState(1);
   const [guess, setGuess] = useState<{ lat: number; lng: number } | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
+  const [curr, setCurr] = useState(false);
 
-  const currentImage = shuffledImages[round];
+  const currentImage = shuffledImages[round - 1];
 
   const { user } = useAuth();
   const userId = user?.uid || "guest";
@@ -92,9 +93,21 @@ const Game: React.FC = () => {
     setRound(round + 1);
   };
 
+  const startGame = () => {
+    setCurr(true);
+  };
+
+  const reset = () => {
+    setShuffledImages(shuffleArray(images));
+    setRound(1);
+    setGuess(null);
+    setShowResult(false);
+    setScore(0);
+  }
+
   const submitGuessToBackend = () => {
     if (guess) {
-      fetch("http://localhost:5000/api/guesses", {
+      fetch("http://localhost:5001/api/guesses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -119,46 +132,74 @@ const Game: React.FC = () => {
 
   if (!isLoaded) return <div>Loading...</div>;
 
-  return (
+  console.log(user);
+  if (user && curr) {
+    return (
     <div>
-      <img src={currentImage.url} alt="Cornell Location" style={imageStyle} />
+        <center>
+          <h1 style={{padding: "1%"}}>Round {round}</h1>
+          <h4> Score: {score} </h4>
+          <h2 >Where is this?</h2>
+        </center>
+        <img src={currentImage.url} alt="Cornell Location" style={imageStyle} />
+        
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          center={{ lat: 42.447, lng: -76.484 }}
+          zoom={16}
+          onClick={onMapClick}
+        >
+          {guess && <Marker position={guess} />}
+          {showResult && <Marker position={currentImage.location} />}
+        </GoogleMap>
 
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={{ lat: 42.447, lng: -76.484 }}
-        zoom={16}
-        onClick={onMapClick}
-      >
-        {guess && <Marker position={guess} />}
-        {showResult && <Marker position={currentImage.location} />}
-      </GoogleMap>
-
-      <center>
-        {!showResult && (
-          <button
-            className={`submitBtn ${!guess || !user ? "disabled" : ""}`}
-            onClick={submitGuessToBackend}
-            disabled={!guess || !user}
-          >
-            {user ? "Submit Guess" : "Sign in to submit guess"}
-          </button>
-        )}
-      </center>
-
-      {showResult && (
-        <div>
-          <p>Distance: {calculateDistance().toFixed(2)} km</p>
-          <p>Round Score: {calculateScore(calculateDistance())} points</p>
-          <p>Total Score: {score} points</p>
-          {round + 1 < images.length ? (
-            <button onClick={handleNextRound}>Next Round</button>
-          ) : (
-            <p>Game Over! Final Score: {score}</p>
+        
+          {!showResult && (
+            <center className='padded-vert'>
+            <button
+              className={`padded-vert submitBtn ${!guess || !user ? "disabled" : ""}`}
+              onClick={submitGuessToBackend}
+              disabled={!guess || !user}
+            >
+              {user ? "Submit Guess" : "Sign in to submit guess"}
+            </button>
+            </center>
           )}
-        </div>
-      )}
+        
+          
+        {showResult && (
+          <center className='padded-vert'>
+          <div>
+            <p>Distance: {calculateDistance().toFixed(2)} km</p>
+            <p>Round Score: {calculateScore(calculateDistance())} points</p>
+            <p>Total Score: {score} points</p>
+            {round + 1 < 6 ? (
+              <button className = 'submitBtn' onClick={handleNextRound}>Next Round</button>
+            ) : (
+              <div>
+                <p>Game Over! Final Score: {score}</p>
+                <button className = 'submitBtn' onClick={reset}>Play Again</button>
+              </div>
+            )}
+            
+          </div>
+          </center>
+        )} )
+      </div>
+  );
+  }
+  if (user) {
+    return (<div style={{ width: "100vw", height: "100vh" }}>
+      <center className = "padded-vert"><button className = "submitBtn" onClick = {startGame}>Start Game</button></center>
+    </div>);
+  }
+  return (
+    <div style={{ width: "100vw", height: "100vh" }}>
+      <center>
+        <h1 className='padded-vert'>Sign in to start playing!</h1>
+      </center>
     </div>
   );
-};
+}
 
 export default Game;
