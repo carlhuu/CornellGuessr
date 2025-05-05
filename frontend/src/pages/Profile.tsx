@@ -17,7 +17,7 @@ const StatBox = (props: Props) => (
     </div>
 );
 
-export function Profile() {
+export default function Profile() {
     const { user } = useAuth();
     return (
     <div>
