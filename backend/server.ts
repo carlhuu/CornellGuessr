@@ -3,7 +3,7 @@ import cors from "cors";
 import { db } from "./firebase";
 
 const app = express();
-const PORT = 5000;
+const PORT = 5001;
 
 app.use(cors());
 app.use(express.json());
@@ -85,6 +85,50 @@ app.delete("/api/guesses/:userId", async (req, res) => {
   } catch (err) {
     console.error("Error deleting guesses:", err);
     res.status(500).json({ message: "Failed to delete guesses." });
+  }
+});
+
+// ---------- POST: input all stats ----------
+app.post("/api/stats", async (req, res) => {
+  const { total_pts, userId} = req.body;
+  if (!total_pts || !userId) {
+    return res.status(400).json({ message: "Invalid guess data." });
+  }
+
+  const guess = { total_pts, userId, timestamp: Date.now() };
+
+  try {
+    const docRef = await db.collection("stats").add(guess);
+    res.status(201).json({ message: "Stats saved!", guessId: docRef.id, guess });
+  } catch (err) {
+    console.error("Error saving stats:", err);
+    res.status(500).json({ message: "Failed to save stats." });
+  }
+});
+
+// ---------- GET: Fetch all stats ----------
+app.get("/api/stats/:userId", async (req, res) => {
+  console.log("Fetching stats... yeet");
+  const { userId } = req.params;
+
+  try {
+    console.log("Fetching stats for userId:", userId);
+    const snapshot = await db.collection("stats").where("userId", "==", userId).get();
+    let games = 0;
+    let pts = 0;
+    let max = 0;
+    for (const doc of snapshot.docs) {
+      const data = doc.data();
+      games += 1;
+      pts += data.total_pts;
+      max = Math.max(max, data.total_pts);
+    }
+    games /= 2;
+    pts /= 2;
+    res.status(200).json({total_games: games, total_pts: pts, high_score: max});
+  } catch (err) {
+    console.error("Error updating guess:", err);
+    res.status(500).json({ message: "Failed to update guess." });
   }
 });
 

@@ -130,6 +130,26 @@ const Game: React.FC = () => {
     }
   };
 
+  const submitStatsToBackend = () => {
+    console.log("Submitting stats...");
+    fetch("http://localhost:5001/api/stats", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        total_pts: score,
+        userId: userId,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("Stats submitted:", data);
+      })
+      .catch((err) => {
+        console.error("Error submitting stats:", err);
+      });
+  }
+
+
   if (!isLoaded) return <div>Loading...</div>;
 
   console.log(user);
@@ -176,6 +196,7 @@ const Game: React.FC = () => {
             {round + 1 < 6 ? (
               <button className = 'submitBtn' onClick={handleNextRound}>Next Round</button>
             ) : (
+              submitStatsToBackend(),
               <div>
                 <p>Game Over! Final Score: {score}</p>
                 <button className = 'submitBtn' onClick={reset}>Play Again</button>
