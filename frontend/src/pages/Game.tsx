@@ -5,87 +5,83 @@ import { useAuth } from "../auth/AuthUserProvider";
 // images
 const images = [
   {
-    url: '/src/assets/game_images/low-rise-7.jpg',
+    url: '/src/assets/game_images/low-rise-7.png',
     location: { lat: 42.456237, lng: -76.475352 }
   },
   {
-    url: '/src/assets/game_images/botanical-gardens.jpg',
+    url: '/src/assets/game_images/botanical-gardens.png',
     location: { lat: 42.449551, lng: -76.472359 }
   },
   {
-    url: '/src/assets/game_images/trillium.jpg',
+    url: '/src/assets/game_images/trillium.png',
     location: { lat: 42.448071, lng: -76.479248 }
   },
   {
-    url: '/src/assets/game_images/noyes-gym.jpg',
+    url: '/src/assets/game_images/noyes-gym.png',
     location: { lat: 42.446518, lng: -76.488033 }
   },
   {
-    url: '/src/images/cocktail-lounge.jpg',
+    url: '/src/assets/game_images/cocktail-lounge.png',
     location: { lat: 42.447868, lng: -76.485291 }
   },
   {
-    url: '/src/images/baker.jpg',
+    url: '/src/assets/game_images/baker.png',
     location: { lat: 42.450414, lng: -76.481873}
   },
   {
-    url: '/src/images/bartels.jpg',
+    url: '/src/assets/game_images/bartels.png',
     location: { lat: 42.445329, lng: -76.485291 }
   },
   {
-    url: '/src/images/barton.jpg',
+    url: '/src/assets/game_images/barton.png',
     location: { lat: 42.445803, lng: -76.480988 }
   },
   {
-    url: '/src/images/duffield.jpg',
+    url: '/src/assets/game_images/duffield.png',
     location: { lat: 42.444457, lng: -76.482602 }
   },
   {
-    url: '/src/images/gates.jpg',
+    url: '/src/assets/game_images/gates.png',
     location: { lat: 42.445034, lng: -76.481229 }
   },
   {
-    url: '/src/images/hollister.jpg',
+    url: '/src/assets/game_images/hollister.png',
     location: { lat: 42.444211, lng: -76.484388 }
   },
   {
-    url: '/src/images/klarman.jpg',
+    url: '/src/assets/game_images/klarman.png',
     location: { lat: 42.449154, lng: -76.483116 }
   },
   {
-    url: '/src/images/morrison.jpg',
+    url: '/src/assets/game_images/morrison.png',
     location: { lat: 42.455644, lng: -76.479270 }
   },
   {
-    url: '/src/images/newman.jpg',
+    url: '/src/assets/game_images/newman.png',
     location: { lat: 42.452892, lng: -76.477716 }
   },
   {
-    url: '/src/images/olin.jpg',
+    url: '/src/assets/game_images/olin.png',
     location: { lat: 42.447906, lng: -76.484661 }
   },
   {
-    url: '/src/images/psb.jpeg',
+    url: '/src/assets/game_images/psb.png',
     location: { lat: 42.449799, lng: -76.481368 }
   },
   {
-    url: '/src/images/olin.jpg',
-    location: { lat: 42.447906, lng: -76.484661 }
-  },
-  {
-    url: '/src/images/rhodes.gif',
+    url: '/src/assets/game_images/rhodes.png',
     location: { lat: 42.443749, lng: -76.481773 }
   },
   {
-    url: '/src/images/rpcc.jpg',
+    url: '/src/assets/game_images/rpcc.png',
     location: { lat: 42.456045, lng: -76.477399 }
   },
   {
-    url: '/src/images/statler.jpg',
+    url: '/src/assets/game_images/statler.png',
     location: { lat: 42.445465, lng: -76.481906 }
   },
   {
-    url: '/src/images/tang.jpg',
+    url: '/src/assets/game_images/tang.png',
     location: { lat: 42.444052 , lng: -76.483804 }
   },
 ];
@@ -113,14 +109,14 @@ const Game: React.FC = () => {
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
   });
 
-  const [shuffledImages, setShuffledImages] = useState(() => shuffleArray(images));
+  const [shuffledImages, setShuffledImages] = useState(shuffleArray(images));
   const [round, setRound] = useState(1);
   const [guess, setGuess] = useState<{ lat: number; lng: number } | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [score, setScore] = useState(0);
   const [curr, setCurr] = useState(false);
 
-  const currentImage = shuffledImages[round - 1];
+  const [currentImage, setCurrentImage] = useState((shuffledImages[round - 1]));
 
   const { user } = useAuth();
   const userId = user?.uid || "guest";
@@ -151,9 +147,11 @@ const Game: React.FC = () => {
   };
 
   const handleNextRound = () => {
+    const nextRound = round + 1;
+    setRound(nextRound);
     setShowResult(false);
     setGuess(null);
-    setRound(round + 1);
+    setCurrentImage(shuffledImages[round - 1]);
   };
 
   const startGame = () => {
@@ -214,7 +212,7 @@ const Game: React.FC = () => {
 
 
   if (!isLoaded) return <div>Loading...</div>;
-
+  
   console.log(user);
   if (user && curr) {
     return (
@@ -224,8 +222,7 @@ const Game: React.FC = () => {
           <h4> Score: {score} </h4>
           <h2 >Where is this?</h2>
         </center>
-        <img src={currentImage.url} alt="Cornell Location" style={imageStyle} />
-        
+        <img src={currentImage.url} style={imageStyle} />
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
           center={{ lat: 42.447, lng: -76.484 }}
