@@ -151,7 +151,7 @@ const Game: React.FC = () => {
     setRound(nextRound);
     setShowResult(false);
     setGuess(null);
-    setCurrentImage(shuffledImages[round - 1]);
+    setCurrentImage(shuffledImages[nextRound - 1]);
   };
 
   const startGame = () => {
@@ -161,6 +161,7 @@ const Game: React.FC = () => {
   const reset = () => {
     setShuffledImages(shuffleArray(images));
     setRound(1);
+    setCurrentImage(shuffledImages[0]);
     setGuess(null);
     setShowResult(false);
     setScore(0);
