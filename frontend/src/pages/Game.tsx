@@ -24,7 +24,70 @@ const images = [
     url: '/src/images/cocktail-lounge.jpg',
     location: { lat: 42.447868, lng: -76.485291 }
   },
-  // add more locations here
+  {
+    url: '/src/images/baker.jpg',
+    location: { lat: 42.450414, lng: -76.481873}
+  },
+  {
+    url: '/src/images/bartels.jpg',
+    location: { lat: 42.445329, lng: -76.485291 }
+  },
+  {
+    url: '/src/images/barton.jpg',
+    location: { lat: 42.445803, lng: -76.480988 }
+  },
+  {
+    url: '/src/images/duffield.jpg',
+    location: { lat: 42.444457, lng: -76.482602 }
+  },
+  {
+    url: '/src/images/gates.jpg',
+    location: { lat: 42.445034, lng: -76.481229 }
+  },
+  {
+    url: '/src/images/hollister.jpg',
+    location: { lat: 42.444211, lng: -76.484388 }
+  },
+  {
+    url: '/src/images/klarman.jpg',
+    location: { lat: 42.449154, lng: -76.483116 }
+  },
+  {
+    url: '/src/images/morrison.jpg',
+    location: { lat: 42.455644, lng: -76.479270 }
+  },
+  {
+    url: '/src/images/newman.jpg',
+    location: { lat: 42.452892, lng: -76.477716 }
+  },
+  {
+    url: '/src/images/olin.jpg',
+    location: { lat: 42.447906, lng: -76.484661 }
+  },
+  {
+    url: '/src/images/psb.jpeg',
+    location: { lat: 42.449799, lng: -76.481368 }
+  },
+  {
+    url: '/src/images/olin.jpg',
+    location: { lat: 42.447906, lng: -76.484661 }
+  },
+  {
+    url: '/src/images/rhodes.gif',
+    location: { lat: 42.443749, lng: -76.481773 }
+  },
+  {
+    url: '/src/images/rpcc.jpg',
+    location: { lat: 42.456045, lng: -76.477399 }
+  },
+  {
+    url: '/src/images/statler.jpg',
+    location: { lat: 42.445465, lng: -76.481906 }
+  },
+  {
+    url: '/src/images/tang.jpg',
+    location: { lat: 42.444052 , lng: -76.483804 }
+  },
 ];
 
 // Styles for image and map
