@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import { useAuth } from "../auth/AuthUserProvider";
 
 // images
 const images = [
   {
-    url: '/images/low-rise-7.jpg',
+    url: '/src/assets/game_images/low-rise-7.jpg',
     location: { lat: 42.456237, lng: -76.475352 }
   },
   {
-    url: '/images/botanical-gardens.jpg',
+    url: '/src/assets/game_images/botanical-gardens.jpg',
     location: { lat: 42.449551, lng: -76.472359 }
   },
   {
-    url: '/images/trillium.jpg',
+    url: '/src/assets/game_images/trillium.jpg',
     location: { lat: 42.448071, lng: -76.479248 }
   },
   {
-    url: '/images/noyes-gym.jpg',
+    url: '/src/assets/game_images/noyes-gym.jpg',
     location: { lat: 42.446518, lng: -76.488033 }
   },
   {
-    url: '/images/cocktail-lounge.jpg',
+    url: '/src/images/cocktail-lounge.jpg',
     location: { lat: 42.447868, lng: -76.485291 }
   },
   // add more locations here
@@ -57,8 +58,9 @@ const Game: React.FC = () => {
 
   const currentImage = shuffledImages[round];
 
-  const userId = "user123"; // replace when auth implemented
-
+  const { user } = useAuth();
+  const userId = user?.uid || "guest";
+  
   const onMapClick = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
       setGuess({ lat: e.latLng.lat(), lng: e.latLng.lng() });
@@ -131,13 +133,17 @@ const Game: React.FC = () => {
         {showResult && <Marker position={currentImage.location} />}
       </GoogleMap>
 
-      <center>{!showResult && guess && (
-        <button className = "submitBtn" onClick={submitGuessToBackend}>
-          Submit Guess
-        </button>
-      )} {!showResult && !guess && (<button className = "submitBtn disabled" onClick={submitGuessToBackend}>
-        Submit Guess
-      </button>)}</center>
+      <center>
+        {!showResult && (
+          <button
+            className={`submitBtn ${!guess || !user ? "disabled" : ""}`}
+            onClick={submitGuessToBackend}
+            disabled={!guess || !user}
+          >
+            {user ? "Submit Guess" : "Sign in to submit guess"}
+          </button>
+        )}
+      </center>
 
       {showResult && (
         <div>

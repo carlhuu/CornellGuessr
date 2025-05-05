@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { db } from "./firebase";
 
 const app = express();
 const PORT = 5000;
@@ -7,50 +8,87 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
-const guesses: { userId: string; lat: number; lng: number; timestamp: number }[] = [];
-
-// GET: Fetch all guesses
-app.get("/api/guesses", (req, res) => {
-  res.status(200).json({ guesses });
+// ---------- GET: Fetch all guesses ----------
+app.get("/api/guesses", async (req, res) => {
+  try {
+    const snapshot = await db.collection("guesses").get();
+    const guesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    res.status(200).json({ guesses });
+  } catch (err) {
+    console.error("Error fetching guesses:", err);
+    res.status(500).json({ message: "Failed to fetch guesses." });
+  }
 });
 
-// POST: Submit a guess
-app.post("/api/guesses", (req, res) => {
+// ---------- POST: Submit a new guess ----------
+app.post("/api/guesses", async (req, res) => {
   const { lat, lng, userId } = req.body;
   if (!lat || !lng || !userId) {
     return res.status(400).json({ message: "Invalid guess data." });
   }
+
   const guess = { lat, lng, userId, timestamp: Date.now() };
-  guesses.push(guess);
-  res.status(201).json({ message: "Guess saved!", guess });
+
+  try {
+    const docRef = await db.collection("guesses").add(guess);
+    res.status(201).json({ message: "Guess saved!", guessId: docRef.id, guess });
+  } catch (err) {
+    console.error("Error saving guess:", err);
+    res.status(500).json({ message: "Failed to save guess." });
+  }
 });
 
-// PUT: Update the latest guess of a user
-app.put("/api/guesses/:userId", (req, res) => {
+// ---------- PUT: Update the latest guess of a user ----------
+app.put("/api/guesses/:userId", async (req, res) => {
   const { userId } = req.params;
   const { lat, lng } = req.body;
-  const index = guesses.findIndex((g) => g.userId === userId);
-  if (index === -1) {
-    return res.status(404).json({ message: "Guess not found." });
+
+  try {
+    const snapshot = await db.collection("guesses").where("userId", "==", userId).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: "Guess not found." });
+    }
+
+    const doc = snapshot.docs[0]; // Only update the first found guess
+    await db.collection("guesses").doc(doc.id).update({
+      lat,
+      lng,
+      timestamp: Date.now()
+    });
+
+    res.status(200).json({ message: "Guess updated." });
+
+  } catch (err) {
+    console.error("Error updating guess:", err);
+    res.status(500).json({ message: "Failed to update guess." });
   }
-  guesses[index] = { ...guesses[index], lat, lng, timestamp: Date.now() };
-  res.status(200).json({ message: "Guess updated.", guess: guesses[index] });
 });
 
-// DELETE: Remove all guesses of a user
-app.delete("/api/guesses/:userId", (req, res) => {
+// ---------- DELETE: Remove all guesses of a user ----------
+app.delete("/api/guesses/:userId", async (req, res) => {
   const { userId } = req.params;
-  const initialLength = guesses.length;
-  const filteredGuesses = guesses.filter((g) => g.userId !== userId);
-  if (filteredGuesses.length === initialLength) {
-    return res.status(404).json({ message: "No guesses found for user." });
+
+  try {
+    const snapshot = await db.collection("guesses").where("userId", "==", userId).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: "No guesses found for user." });
+    }
+
+    const batch = db.batch();
+    snapshot.docs.forEach(doc => batch.delete(doc.ref));
+    await batch.commit();
+
+    res.status(200).json({ message: "Guesses deleted for user." });
+
+  } catch (err) {
+    console.error("Error deleting guesses:", err);
+    res.status(500).json({ message: "Failed to delete guesses." });
   }
-  guesses.length = 0;
-  guesses.push(...filteredGuesses);
-  res.status(200).json({ message: "Guesses deleted for user." });
 });
 
-// Start server
+// ---------- Start server ----------
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
 });
