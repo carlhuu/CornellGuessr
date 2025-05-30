@@ -2,20 +2,16 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-// Our web app's Firebase configuration (example)
 const firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API,
-    authDomain: "cornellguessr-96637.firebaseapp.com",
-    projectId: "cornellguessr-96637",
-    storageBucket: "cornellguessr-96637.firebasestorage.app",
-    messagingSenderId: "214428066482",
-    appId: "1:214428066482:web:8f742845328f1c7fc69fab",
-    measurementId: "G-KQSDL3E5NE"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: "cornellguessr-ba50b.firebaseapp.com",
+  projectId: "cornellguessr-ba50b",
+  storageBucket: "cornellguessr-ba50b.appspot.com",
+  messagingSenderId: "951128114371",
+  appId: "1:951128114371:web:ba24d04dafaa0162b6ce76",
+  measurementId: "G-QRPV9Q9B6J",
 };
-// Initialize Firebase
+
 export const app = initializeApp(firebaseConfig);
-
-// Initialize Firestore
 export const db = getFirestore(app);
-
-export const auth = getAuth();
+export const auth = getAuth(app); 
