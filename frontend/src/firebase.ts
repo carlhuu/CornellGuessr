@@ -2,6 +2,8 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
+console.log("ahhhhhhhhhhhhhhhhhhhhhh VITE_FIREBASE_API_KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: "cornellguessr-ba50b.firebaseapp.com",
