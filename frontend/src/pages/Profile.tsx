@@ -1,4 +1,4 @@
-import p1 from "/src/assets/homepage/pic1.jpg";
+import p1 from "/homepage/pic1.jpg";
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -60,21 +60,21 @@ export default function Profile() {
                 <Col>
                     <StatBox 
                         name = {"Games Played"} 
-                        img = {"/src/assets/profile/crown.png"} 
+                        img = {"/profile/crown.png"} 
                         val = {stats? stats.total_games : 0} 
                     />
                 </Col>
                 <Col>
                     <StatBox 
                         name = {"High Score"} 
-                        img = {"/src/assets/profile/game.png"} 
+                        img = {"/profile/game.png"} 
                         val = {stats? stats.high_score : 0} 
                     />
                 </Col>
                 <Col>
                     <StatBox 
                         name = {"Average Score"} 
-                        img = {"/src/assets/profile/sword.png"} 
+                        img = {"/profile/sword.png"} 
                         val = {stats? calc(stats.total_pts, stats.total_games) : 0} 
                     />
                 </Col>

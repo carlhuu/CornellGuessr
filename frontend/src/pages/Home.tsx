@@ -1,10 +1,10 @@
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
 
-import p1 from "/src/assets/homepage/pic1.jpg";
-import p2 from "/src/assets/homepage/pic2.jpg";
-import p3 from "/src/assets/homepage/pic3.jpg";
-import p4 from "/src/assets/homepage/pic4.jpg";
+import p1 from "/homepage/pic1.jpg";
+import p2 from "/homepage/pic2.jpg";
+import p3 from "/homepage/pic3.jpg";
+import p4 from "/homepage/pic4.jpg";
 
 const images = [
     {
