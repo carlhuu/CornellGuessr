@@ -5,83 +5,83 @@ import { useAuth } from "../auth/AuthUserProvider";
 // images
 const images = [
   {
-    url: '/src/assets/game_images/low-rise-7.png',
+    url: 'game_images/low-rise-7.png',
     location: { lat: 42.456237, lng: -76.475352 }
   },
   {
-    url: '/src/assets/game_images/botanical-gardens.png',
+    url: 'game_images/botanical-gardens.png',
     location: { lat: 42.449551, lng: -76.472359 }
   },
   {
-    url: '/src/assets/game_images/trillium.png',
+    url: 'game_images/trillium.png',
     location: { lat: 42.448071, lng: -76.479248 }
   },
   {
-    url: '/src/assets/game_images/noyes-gym.png',
+    url: 'game_images/noyes-gym.png',
     location: { lat: 42.446518, lng: -76.488033 }
   },
   {
-    url: '/src/assets/game_images/cocktail-lounge.png',
+    url: 'game_images/cocktail-lounge.png',
     location: { lat: 42.447868, lng: -76.485291 }
   },
   {
-    url: '/src/assets/game_images/baker.png',
+    url: 'game_images/baker.png',
     location: { lat: 42.450414, lng: -76.481873}
   },
   {
-    url: '/src/assets/game_images/bartels.png',
+    url: 'game_images/bartels.png',
     location: { lat: 42.445329, lng: -76.485291 }
   },
   {
-    url: '/src/assets/game_images/barton.png',
+    url: 'game_images/barton.png',
     location: { lat: 42.445803, lng: -76.480988 }
   },
   {
-    url: '/src/assets/game_images/duffield.png',
+    url: 'game_images/duffield.png',
     location: { lat: 42.444457, lng: -76.482602 }
   },
   {
-    url: '/src/assets/game_images/gates.png',
+    url: 'game_images/gates.png',
     location: { lat: 42.445034, lng: -76.481229 }
   },
   {
-    url: '/src/assets/game_images/hollister.png',
+    url: 'game_images/hollister.png',
     location: { lat: 42.444211, lng: -76.484388 }
   },
   {
-    url: '/src/assets/game_images/klarman.png',
+    url: 'game_images/klarman.png',
     location: { lat: 42.449154, lng: -76.483116 }
   },
   {
-    url: '/src/assets/game_images/morrison.png',
+    url: 'game_images/morrison.png',
     location: { lat: 42.455644, lng: -76.479270 }
   },
   {
-    url: '/src/assets/game_images/newman.png',
+    url: 'game_images/newman.png',
     location: { lat: 42.452892, lng: -76.477716 }
   },
   {
-    url: '/src/assets/game_images/olin.png',
+    url: 'game_images/olin.png',
     location: { lat: 42.447906, lng: -76.484661 }
   },
   {
-    url: '/src/assets/game_images/psb.png',
+    url: 'game_images/psb.png',
     location: { lat: 42.449799, lng: -76.481368 }
   },
   {
-    url: '/src/assets/game_images/rhodes.png',
+    url: 'game_images/rhodes.png',
     location: { lat: 42.443749, lng: -76.481773 }
   },
   {
-    url: '/src/assets/game_images/rpcc.png',
+    url: 'game_images/rpcc.png',
     location: { lat: 42.456045, lng: -76.477399 }
   },
   {
-    url: '/src/assets/game_images/statler.png',
+    url: 'game_images/statler.png',
     location: { lat: 42.445465, lng: -76.481906 }
   },
   {
-    url: '/src/assets/game_images/tang.png',
+    url: 'game_images/tang.png',
     location: { lat: 42.444052 , lng: -76.483804 }
   },
 ];
