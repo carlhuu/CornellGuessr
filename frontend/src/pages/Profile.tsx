@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 
 type Props = {name: string; img: string; val: number};
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 const StatBox = (props: Props) => (
     <div className = "stat_box">
         <center>
@@ -21,7 +23,7 @@ const StatBox = (props: Props) => (
 type Stats = { high_score: number; total_games: number; total_pts: number};
 
 const getStats = (id: string): Promise<Stats | null> =>
-    fetch(`http://localhost:5001/api/stats/${id}`).then((res) => res.json());
+    fetch(`${backendUrl}/api/stats/${id}`).then((res) => res.json());
 
 export default function Profile() {
     const { user } = useAuth();
