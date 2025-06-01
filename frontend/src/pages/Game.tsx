@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { useAuth } from "../auth/AuthUserProvider";
 
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
+
 // images
 const images = [
   {
@@ -169,7 +171,7 @@ const Game: React.FC = () => {
 
   const submitGuessToBackend = () => {
     if (guess) {
-      fetch("http://localhost:5001/api/guesses", {
+      fetch(`${backendUrl}/api/guesses`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -194,7 +196,7 @@ const Game: React.FC = () => {
 
   const submitStatsToBackend = () => {
     console.log("Submitting stats...");
-    fetch("http://localhost:5001/api/stats", {
+    fetch(`${backendUrl}/api/stats`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
