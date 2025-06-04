@@ -135,7 +135,7 @@ app.get("/api/stats/:userId", async (req, res) => {
 // is it running
 
 app.get("/", (req, res) => {
-  res.send("Backend is running");
+  res.send("Backend is running 🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰");
 })
 
 // Start server 
