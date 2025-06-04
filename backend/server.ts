@@ -8,7 +8,7 @@ const PORT = 5001;
 app.use(cors());
 app.use(express.json());
 
-// ---------- GET: Fetch all guesses ----------
+// GET: Fetch all guesses
 app.get("/api/guesses", async (req, res) => {
   try {
     const snapshot = await db.collection("guesses").get();
@@ -20,7 +20,7 @@ app.get("/api/guesses", async (req, res) => {
   }
 });
 
-// ---------- POST: Submit a new guess ----------
+// POST: Submit a new guess
 app.post("/api/guesses", async (req, res) => {
   const { lat, lng, userId } = req.body;
   if (!lat || !lng || !userId) {
@@ -38,7 +38,7 @@ app.post("/api/guesses", async (req, res) => {
   }
 });
 
-// ---------- PUT: Update the latest guess of a user ----------
+// PUT: Update the latest guess of a user
 app.put("/api/guesses/:userId", async (req, res) => {
   const { userId } = req.params;
   const { lat, lng } = req.body;
@@ -65,7 +65,7 @@ app.put("/api/guesses/:userId", async (req, res) => {
   }
 });
 
-// ---------- DELETE: Remove all guesses of a user ----------
+// DELETE: Remove all guesses of a user
 app.delete("/api/guesses/:userId", async (req, res) => {
   const { userId } = req.params;
 
@@ -88,7 +88,7 @@ app.delete("/api/guesses/:userId", async (req, res) => {
   }
 });
 
-// ---------- POST: input all stats ----------
+// POST: input all stats
 app.post("/api/stats", async (req, res) => {
   const { total_pts, userId} = req.body;
   if (!total_pts || !userId) {
@@ -106,7 +106,7 @@ app.post("/api/stats", async (req, res) => {
   }
 });
 
-// ---------- GET: Fetch all stats ----------
+// GET: Fetch all stats
 app.get("/api/stats/:userId", async (req, res) => {
   console.log("Fetching stats... yeet");
   const { userId } = req.params;
@@ -132,7 +132,13 @@ app.get("/api/stats/:userId", async (req, res) => {
   }
 });
 
-// ---------- Start server ----------
+// is it running
+
+app.get("/", (req, res) => {
+  res.send("Backend is running");
+})
+
+// Start server 
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
 });
