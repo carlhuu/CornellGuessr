@@ -102,12 +102,12 @@ app.delete("/api/guesses/:userId", async (req, res) => {
 
 // POST: input all stats
 app.post("/api/stats", async (req, res) => {
-  const { total_pts, userId} = req.body;
-  if (!total_pts || !userId) {
+  const { total_pts, userId, displayName } = req.body;
+  if (!total_pts || !userId || !displayName) {
     return res.status(400).json({ message: "Invalid guess data." });
   }
 
-  const guess = { total_pts, userId, timestamp: Date.now() };
+  const guess = { total_pts, userId, displayName, timestamp: Date.now() };
 
   try {
     const docRef = await db.collection("stats").add(guess);
@@ -121,19 +121,21 @@ app.post("/api/stats", async (req, res) => {
 // GET: Fetch all stats
 app.get("/api/stats", async (req, res) => {
   try {
-    const snapshot = await db.collection("stats").orderBy("timestamp", "desc").get();
-    const stats = snapshot.docs.map(doc => {
+    const snapshot = await db.collection("stats").orderBy("total_pts", "desc").limit(100).get();
+    const leaderboard = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
         id: doc.id,
-        ...data,
+        userID: data.userId,
+        displayName: data.displayName || "Guest",
+        total_pts: data.total_pts,
         date: new Date(data.timestamp).toLocaleString(),
       };
     });
-    res.status(200).json({ stats });
+    res.status(200).json({ leaderboard });
   } catch (err) {
-    console.error("Error fetching stats:", err);
-    res.status(500).json({ message: "Failed to fetch stats." });
+    console.error("Error fetching leaderboard:", err);
+    res.status(500).json({ message: "Failed to fetch leaderboard." });
   }
 }); 
 
