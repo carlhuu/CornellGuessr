@@ -1,12 +1,4 @@
-import { useState } from "react";
-import {
-  createStyles,
-  Header,
-  Container,
-  Group,
-  Burger,
-  rem,
-} from "@mantine/core";
+import { createStyles, Header, Container, Group, Burger, rem } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
@@ -78,16 +70,14 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
   const location = useLocation();
   const activePath = location.pathname;
 
-  const [isLog, setIsLog] = useState<boolean>(false);
   const { user } = useAuth();
 
   const handleLoginClick = async () => {
-    if (isLog) {
+    if (user) {
       await signOut();
     } else {
       await signIn();
     }
-    setIsLog(!isLog);
   };
 
   const items = links.map((link) => (
@@ -130,9 +120,9 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
             gap: "12px",
           }}
         >
-          {isLog && <p className="center">Hello, {user?.displayName}</p>}
+          {user && <p className="center">Hello, {user.displayName}</p>}
           <button onClick={handleLoginClick}>
-            {isLog ? "Sign out" : "Log in"}
+            {user ? "Sign out" : "Log in"}
           </button>
         </div>
       </Container>
