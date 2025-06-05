@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
 import { useAuth } from "../auth/AuthUserProvider";
 
@@ -42,21 +42,42 @@ const mapContainerStyle: React.CSSProperties = {
 
 const shuffleArray = (array: typeof images) => [...array].sort(() => Math.random() - 0.5);
 
+const saveGameState = (state: object) => {
+  localStorage.setItem("cornellguessrGame", JSON.stringify(state));
+};
+
+const loadGameState = () => {
+  const state = localStorage.getItem("cornellguessrGame");
+  return state ? JSON.parse(state) : null;
+};
+
+const clearGameState = () => {
+  localStorage.removeItem("cornellguessrGame");
+};
+
 const Game: React.FC = () => {
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
   });
 
-  const [shuffledImages, setShuffledImages] = useState(shuffleArray(images));
-  const [round, setRound] = useState(1);
-  const [guess, setGuess] = useState<{ lat: number; lng: number } | null>(null);
-  const [showResult, setShowResult] = useState(false);
-  const [score, setScore] = useState(0);
-  const [curr, setCurr] = useState(false);
+  const saved = loadGameState();
+
+  const [shuffledImages, setShuffledImages] = useState(saved?.shuffledImages || shuffleArray(images));
+  const [round, setRound] = useState(saved?.round || 1);
+  const [guess, setGuess] = useState(saved?.guess || null);
+  const [showResult, setShowResult] = useState(saved?.showResult || false);
+  const [score, setScore] = useState(saved?.score || 0);
+  const [curr, setCurr] = useState(saved?.curr || false);
   const [currentImage, setCurrentImage] = useState(shuffledImages[round - 1]);
 
   const { user } = useAuth();
   const userId = user?.uid || "Guest";
+
+  useEffect(() => {
+    if (curr) {
+      saveGameState({ shuffledImages, round, guess, showResult, score, curr });
+    }
+  }, [shuffledImages, round, guess, showResult, score, curr]);
 
   const onMapClick = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
@@ -98,6 +119,7 @@ const Game: React.FC = () => {
     setGuess(null);
     setShowResult(false);
     setScore(0);
+    clearGameState();
   };
 
   const submitGuessToBackend = () => {
