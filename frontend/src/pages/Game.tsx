@@ -121,7 +121,7 @@ const Game: React.FC = () => {
   const [currentImage, setCurrentImage] = useState((shuffledImages[round - 1]));
 
   const { user } = useAuth();
-  const userId = user?.uid || "guest";
+  const userId = user?.uid || "Guest";
   
   const onMapClick = (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
@@ -178,6 +178,7 @@ const Game: React.FC = () => {
           lat: guess.lat,
           lng: guess.lng,
           userId: userId,
+          displayName: user?.displayName || "Guest"
         }),
       })
         .then((res) => res.json())

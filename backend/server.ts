@@ -12,7 +12,14 @@ app.use(express.json());
 app.get("/api/guesses", async (req, res) => {
   try {
     const snapshot = await db.collection("guesses").get();
-    const guesses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const guesses = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        date: new Date(data.timestamp).toLocaleString(),
+      };
+});
     res.status(200).json({ guesses });
   } catch (err) {
     console.error("Error fetching guesses:", err);
@@ -22,16 +29,21 @@ app.get("/api/guesses", async (req, res) => {
 
 // POST: Submit a new guess
 app.post("/api/guesses", async (req, res) => {
-  const { lat, lng, userId } = req.body;
-  if (!lat || !lng || !userId) {
+  const { lat, lng, userId, displayName } = req.body;
+
+  if (!lat || !lng || !userId || !displayName) {
     return res.status(400).json({ message: "Invalid guess data." });
   }
 
-  const guess = { lat, lng, userId, timestamp: Date.now() };
+  const timestamp = Date.now();
+  const guess = { lat, lng, userId, displayName, timestamp };
+
+  const customId = `guess_${userId}_${timestamp}`;
 
   try {
-    const docRef = await db.collection("guesses").add(guess);
-    res.status(201).json({ message: "Guess saved!", guessId: docRef.id, guess });
+    const docRef = db.collection("guesses").doc(customId);
+    await docRef.set(guess);
+    res.status(201).json({ message: "Guess saved!", guessId: customId, guess });
   } catch (err) {
     console.error("Error saving guess:", err);
     res.status(500).json({ message: "Failed to save guess." });
