@@ -119,30 +119,23 @@ app.post("/api/stats", async (req, res) => {
 });
 
 // GET: Fetch all stats
-app.get("/api/stats/:userId", async (req, res) => {
-  console.log("Fetching stats... yeet");
-  const { userId } = req.params;
-
+app.get("/api/stats", async (req, res) => {
   try {
-    console.log("Fetching stats for userId:", userId);
-    const snapshot = await db.collection("stats").where("userId", "==", userId).get();
-    let games = 0;
-    let pts = 0;
-    let max = 0;
-    for (const doc of snapshot.docs) {
+    const snapshot = await db.collection("stats").orderBy("timestamp", "desc").get();
+    const stats = snapshot.docs.map(doc => {
       const data = doc.data();
-      games += 1;
-      pts += data.total_pts;
-      max = Math.max(max, data.total_pts);
-    }
-    games /= 2;
-    pts /= 2;
-    res.status(200).json({total_games: games, total_pts: pts, high_score: max});
+      return {
+        id: doc.id,
+        ...data,
+        date: new Date(data.timestamp).toLocaleString(),
+      };
+    });
+    res.status(200).json({ stats });
   } catch (err) {
-    console.error("Error updating guess:", err);
-    res.status(500).json({ message: "Failed to update guess." });
+    console.error("Error fetching stats:", err);
+    res.status(500).json({ message: "Failed to fetch stats." });
   }
-});
+}); 
 
 // is it running
 
