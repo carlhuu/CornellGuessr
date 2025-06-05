@@ -217,7 +217,6 @@ const Game: React.FC = () => {
 
   if (!isLoaded) return <div>Loading...</div>;
   
-  console.log(user);
   if (user && curr) {
     return (
     <div>
@@ -245,7 +244,7 @@ const Game: React.FC = () => {
               onClick={submitGuessToBackend}
               disabled={!guess || !user}
             >
-              {user ? "Submit Guess" : "Sign in to submit guess"}
+              {user ? "Submit Guess" : "Log in to submit guess"}
             </button>
             </center>
           )}
@@ -281,7 +280,7 @@ const Game: React.FC = () => {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <center>
-        <h1 className='padded-vert'>Sign in to start playing!</h1>
+        <h1 className='padded-vert'>Log in to start playing!</h1>
       </center>
     </div>
   );

@@ -36,14 +36,10 @@ export default function Profile() {
     }
 
     useEffect(() => {
-        console.log("Loading stats ...");
         if (!user) {
-            console.log("No user found");
             return;
         }
-        console.log("User found: ", user.uid);
         getStats(user.uid).then((data) => {
-          console.log(data);
           setStats(data);
         });
       }, []);
@@ -52,7 +48,7 @@ export default function Profile() {
     <div>
         <center>
             <h1 className = "profile_header">
-                {user?.displayName ? user.displayName : "Sign in to view profile"}
+                {user?.displayName ? user.displayName : "Log in to view profile!"}
             </h1>
             <img className = "profile_img" src = {p1}/>
         </center>

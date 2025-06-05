@@ -8,7 +8,6 @@ import {
     rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { ArrowUpCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
 import { useAuth } from "../auth/AuthUserProvider";
@@ -111,7 +110,8 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
     return (
         <Header height={60}>
             <Container className={classes.header}>
-                <ArrowUpCircle size={28} />
+                <img src="big_red.png" alt="Logo" style={{ height: "28px", width: "28px", marginLeft: "20px" }}
+    />
                 <Group spacing={5} className={classes.links}>
                     {items}
                 </Group>

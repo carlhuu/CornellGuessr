@@ -415,10 +415,13 @@ i {
 }
 
 .profile_img {
-    width: 50%;
-    height: auto;
-    padding: 2.5%;
+  width: 50%;
+  height: auto;
+  padding: 2.5%;
+  display: block;
+  margin: 0 auto;
 }
+
 
 .stats_img {
     padding-top: 5%;
@@ -436,4 +439,6 @@ i {
 
 .profile_header {
     padding-top: 2.5%;
+    text-align: center;
 }
+
