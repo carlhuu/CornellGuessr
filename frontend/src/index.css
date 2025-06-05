@@ -442,3 +442,15 @@ i {
     text-align: center;
 }
 
+.spiral-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem;
+}
+
+.spiral-row {
+  font-size: 2rem;
+  margin: 0.5rem 0;
+}
+

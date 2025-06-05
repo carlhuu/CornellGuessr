@@ -36,49 +36,71 @@ export default function Profile() {
     }
 
     useEffect(() => {
-        if (!user) {
-            return;
+      const fetchStats = () => {
+        if (!user) return;
+        getStats(user.uid)
+          .then((data) => setStats(data))
+          .catch((err) => console.error("Error fetching stats:", err));
+      };
+
+      fetchStats();
+
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "visible") {
+          fetchStats();
         }
-        getStats(user.uid).then((data) => {
-          setStats(data);
-        });
-      }, []);
+      };
+
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      return () => {
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange
+        );
+      };
+    }, [user, location.pathname]);
+
 
     return (
-    <div>
-        <center>
-            <h1 className = "profile_header">
-                {user?.displayName ? user.displayName : "Log in to view profile!"}
-            </h1>
-            <img className = "profile_img" src = {p1}/>
-        </center>
-        <div style = {{paddingBottom: "2%"}} >
-        <Container >
-            <Row>
-                <Col>
-                    <StatBox 
-                        name = {"Games Played"} 
-                        img = {"/profile/crown.png"} 
-                        val = {stats? stats.total_games : 0} 
-                    />
-                </Col>
-                <Col>
-                    <StatBox 
-                        name = {"High Score"} 
-                        img = {"/profile/game.png"} 
-                        val = {stats? stats.high_score : 0} 
-                    />
-                </Col>
-                <Col>
-                    <StatBox 
-                        name = {"Average Score"} 
-                        img = {"/profile/sword.png"} 
-                        val = {stats? calc(stats.total_pts, stats.total_games) : 0} 
-                    />
-                </Col>
-            </Row>
+  <div>
+    <center>
+      <h1 className="profile_header">
+        {user?.displayName ? user.displayName : "Log in to view profile!"}
+      </h1>
+      <img className="profile_img" src={p1} />
+    </center>
+
+    {user && (
+      <div style={{ paddingBottom: "2%" }}>
+        <Container>
+          <Row>
+            <Col>
+              <StatBox
+                name="Games Played"
+                img="/profile/crown.png"
+                val={stats ? stats.total_games : 0}
+              />
+            </Col>
+            <Col>
+              <StatBox
+                name="High Score"
+                img="/profile/game.png"
+                val={stats ? stats.high_score : 0}
+              />
+            </Col>
+            <Col>
+              <StatBox
+                name="Average Score"
+                img="/profile/sword.png"
+                val={stats ? calc(stats.total_pts, stats.total_games) : 0}
+              />
+            </Col>
+          </Row>
         </Container>
-        </div>
-    </div> 
-    );
+      </div>
+    )}
+  </div>
+);
+
 }

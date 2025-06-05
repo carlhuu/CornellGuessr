@@ -62,7 +62,7 @@ app.put("/api/guesses/:userId", async (req, res) => {
       return res.status(404).json({ message: "Guess not found." });
     }
 
-    const doc = snapshot.docs[0]; // Only update the first found guess
+    const doc = snapshot.docs[0]; 
     await db.collection("guesses").doc(doc.id).update({
       lat,
       lng,
