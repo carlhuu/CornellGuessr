@@ -11,7 +11,7 @@ app.use(express.json());
 // GET: Fetch all guesses
 app.get("/api/guesses", async (req, res) => {
   try {
-    const snapshot = await db.collection("guesses").get();
+    const snapshot = await db.collection("guesses").orderBy("timestamp", "desc").get();
     const guesses = snapshot.docs.map(doc => {
       const data = doc.data();
       return {
