@@ -103,20 +103,52 @@ app.delete("/api/guesses/:userId", async (req, res) => {
 // POST: input all stats
 app.post("/api/stats", async (req, res) => {
   const { total_pts, userId, displayName } = req.body;
-  if (!total_pts || !userId || !displayName) {
-    return res.status(400).json({ message: "Invalid guess data." });
+  if (total_pts === undefined || !userId) {
+    return res.status(400).json({ message: "Invalid stats data." });
   }
 
-  const guess = { total_pts, userId, displayName, timestamp: Date.now() };
+  const userRef = db.collection("stats").doc(userId);
 
   try {
-    const docRef = await db.collection("stats").add(guess);
-    res.status(201).json({ message: "Stats saved!", guessId: docRef.id, guess });
+    const doc = await userRef.get();
+
+    if (doc.exists) {
+      const data = doc.data();
+      await userRef.update({
+        total_pts: (data.total_pts || 0) + total_pts,
+        total_games: (data.total_games || 0) + 1,
+        high_score: Math.max(data.high_score || 0, total_pts),
+      });
+    } else {
+      await userRef.set({
+        total_pts,
+        total_games: 1,
+        high_score: total_pts,
+        displayName: displayName || "Guest",
+      });
+    }
+
+    res.status(200).json({ message: "Stats saved/updated!" });
   } catch (err) {
     console.error("Error saving stats:", err);
     res.status(500).json({ message: "Failed to save stats." });
   }
 });
+
+app.get("/api/stats/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const doc = await db.collection("stats").doc(userId).get();
+    if (!doc.exists) {
+      return res.status(200).json({ total_pts: 0, total_games: 0, high_score: 0 });
+    }
+    res.status(200).json(doc.data());
+  } catch (err) {
+    console.error("Error fetching user stats:", err);
+    res.status(500).json({ message: "Failed to fetch stats." });
+  }
+});
+
 
 // GET: Fetch all stats
 app.get("/api/stats", async (req, res) => {
