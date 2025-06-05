@@ -1,4 +1,12 @@
-import { createStyles, Header, Container, Group, Burger, rem } from "@mantine/core";
+import { useState } from "react";
+import {
+  createStyles,
+  Header,
+  Container,
+  Group,
+  Burger,
+  rem,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
@@ -11,6 +19,7 @@ const useStyles = createStyles((theme) => ({
     gap: "2rem",
     alignItems: "center",
     height: "100%",
+    position: "relative",
   },
 
   links: {
@@ -65,7 +74,7 @@ interface HeaderSimpleProps {
 }
 
 export function HeaderSimple({ links }: HeaderSimpleProps) {
-  const [opened, { toggle }] = useDisclosure(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
   const { classes, cx } = useStyles();
   const location = useLocation();
   const activePath = location.pathname;
@@ -87,6 +96,7 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
       className={cx(classes.link, {
         [classes.linkActive]: activePath === link.link,
       })}
+      onClick={close}
     >
       {link.label}
     </Link>
@@ -126,6 +136,35 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
           </button>
         </div>
       </Container>
+
+      {/* Mobile menu */}
+      {opened && (
+        <div
+          style={{
+            position: "absolute",
+            top: "60px",
+            left: 0,
+            right: 0,
+            backgroundColor: "white",
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+            padding: "1rem",
+            zIndex: 999,
+          }}
+        >
+          {links.map((link) => (
+            <Link
+              key={link.label}
+              to={link.link}
+              className={cx(classes.link, {
+                [classes.linkActive]: activePath === link.link,
+              })}
+              onClick={close}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      )}
     </Header>
   );
 }
