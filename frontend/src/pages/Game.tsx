@@ -138,7 +138,7 @@ const Game: React.FC = () => {
       .then(() => {
         const distance = calculateDistance();
         const roundScore = calculateScore(distance);
-        setScore(prev => prev + roundScore);
+        setScore((prev: number) => prev + roundScore);
         setShowResult(true);
       });
   };
