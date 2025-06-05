@@ -1,133 +1,141 @@
 import { useState } from "react";
 import {
-    createStyles,
-    Header,
-    Container,
-    Group,
-    Burger,
-    rem,
+  createStyles,
+  Header,
+  Container,
+  Group,
+  Burger,
+  rem,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
 import { useAuth } from "../auth/AuthUserProvider";
 
-
 const useStyles = createStyles((theme) => ({
-    header: {
-        display: "flex",
-        justifyContent: "start",
-        gap: "2rem",
-        alignItems: "center",
-        height: "100%",
-    },
+  header: {
+    display: "flex",
+    justifyContent: "start",
+    gap: "2rem",
+    alignItems: "center",
+    height: "100%",
+  },
 
-    links: {
-        [theme.fn.smallerThan("xs")]: {
-            display: "none",
-        },
+  links: {
+    [theme.fn.smallerThan("xs")]: {
+      display: "none",
     },
+  },
 
-    burger: {
-        [theme.fn.largerThan("xs")]: {
-            display: "none",
-        },
+  burger: {
+    [theme.fn.largerThan("xs")]: {
+      display: "none",
     },
+  },
 
-    link: {
-        display: "block",
-        lineHeight: 1,
-        padding: `${rem(8)} ${rem(12)}`,
-        borderRadius: theme.radius.sm,
-        textDecoration: "none",
-        color:
-            theme.colorScheme === "dark"
-                ? theme.colors.dark[0]
-                : theme.colors.gray[7],
-        fontSize: theme.fontSizes.sm,
-        fontWeight: 500,
+  link: {
+    display: "block",
+    lineHeight: 1,
+    padding: `${rem(8)} ${rem(12)}`,
+    borderRadius: theme.radius.sm,
+    textDecoration: "none",
+    color:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[0]
+        : theme.colors.gray[7],
+    fontSize: theme.fontSizes.sm,
+    fontWeight: 500,
 
-        "&:hover": {
-            backgroundColor:
-                theme.colorScheme === "dark"
-                    ? theme.colors.dark[6]
-                    : theme.colors.gray[0],
-        },
+    "&:hover": {
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.gray[0],
     },
+  },
 
-    linkActive: {
-        "&, &:hover": {
-            backgroundColor: theme.fn.variant({
-                variant: "light",
-                color: theme.primaryColor,
-            }).background,
-            color: theme.fn.variant({
-                variant: "light",
-                color: theme.primaryColor,
-            }).color,
-        },
+  linkActive: {
+    "&, &:hover": {
+      backgroundColor: theme.fn.variant({
+        variant: "light",
+        color: theme.primaryColor,
+      }).background,
+      color: theme.fn.variant({
+        variant: "light",
+        color: theme.primaryColor,
+      }).color,
     },
+  },
 }));
 
 interface HeaderSimpleProps {
-    links: { link: string; label: string }[];
+  links: { link: string; label: string }[];
 }
 
 export function HeaderSimple({ links }: HeaderSimpleProps) {
-    const [opened, { toggle }] = useDisclosure(false);
-    const [active, setActive] = useState(links[0].link);
-    const { classes, cx } = useStyles();
+  const [opened, { toggle }] = useDisclosure(false);
+  const { classes, cx } = useStyles();
+  const location = useLocation();
+  const activePath = location.pathname;
 
-    const items = links.map((link) => (
-        <Link
-            key={link.label}
-            to={link.link}
-            className={cx(classes.link, {
-                [classes.linkActive]: active === link.link,
-            })}
-            onClick={(event) => {
-                setActive(link.link);
-            }}
-        >
-            {link.label}
+  const [isLog, setIsLog] = useState<boolean>(false);
+  const { user } = useAuth();
+
+  const handleLoginClick = async () => {
+    if (isLog) {
+      await signOut();
+    } else {
+      await signIn();
+    }
+    setIsLog(!isLog);
+  };
+
+  const items = links.map((link) => (
+    <Link
+      key={link.label}
+      to={link.link}
+      className={cx(classes.link, {
+        [classes.linkActive]: activePath === link.link,
+      })}
+    >
+      {link.label}
+    </Link>
+  ));
+
+  return (
+    <Header height={60}>
+      <Container className={classes.header}>
+        <Link to="/">
+          <img
+            src="big_red.png"
+            alt="Logo"
+            style={{ height: "28px", width: "28px", marginLeft: "20px" }}
+          />
         </Link>
-        
-    ));
-
-    const [isLog, setIsLog] = useState<boolean>(false);
-    const { user } = useAuth();
-  
-  
-    const handleLoginClick = async () => {
-      if (isLog) {
-        await signOut();
-      } else {
-        await signIn();
-      }
-      setIsLog(!isLog);
-    };
-
-    return (
-        <Header height={60}>
-            <Container className={classes.header}>
-                <img src="big_red.png" alt="Logo" style={{ height: "28px", width: "28px", marginLeft: "20px" }}
-    />
-                <Group spacing={5} className={classes.links}>
-                    {items}
-                </Group>
-                <Burger
-                    opened={opened}
-                    onClick={toggle}
-                    className={classes.burger}
-                    size='sm'
-                />
-                <div style={{ width:"40vw", display: "flex", justifyContent: "flex-end", alignItems: "center", gap: "12px" }}> 
-                    { isLog && <p className= "center" >Hello, {user?.displayName}</p>}
-                    <button onClick={handleLoginClick}>
-                        {isLog ? "Sign out" : "Log in"}
-                    </button>
-                </div>
-            </Container>
-        </Header>
-    );
+        <Group spacing={5} className={classes.links}>
+          {items}
+        </Group>
+        <Burger
+          opened={opened}
+          onClick={toggle}
+          className={classes.burger}
+          size="sm"
+        />
+        <div
+          style={{
+            width: "40vw",
+            display: "flex",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
+          {isLog && <p className="center">Hello, {user?.displayName}</p>}
+          <button onClick={handleLoginClick}>
+            {isLog ? "Sign out" : "Log in"}
+          </button>
+        </div>
+      </Container>
+    </Header>
+  );
 }
