@@ -19,7 +19,7 @@ app.get("/api/guesses", async (req, res) => {
         ...data,
         date: new Date(data.timestamp).toLocaleString(),
       };
-});
+    });
     res.status(200).json({ guesses });
   } catch (err) {
     console.error("Error fetching guesses:", err);
@@ -62,7 +62,7 @@ app.put("/api/guesses/:userId", async (req, res) => {
       return res.status(404).json({ message: "Guess not found." });
     }
 
-    const doc = snapshot.docs[0]; 
+    const doc = snapshot.docs[0];
     await db.collection("guesses").doc(doc.id).update({
       lat,
       lng,
@@ -100,57 +100,51 @@ app.delete("/api/guesses/:userId", async (req, res) => {
   }
 });
 
-// POST: input all stats
+// POST: input one game stat
 app.post("/api/stats", async (req, res) => {
   const { total_pts, userId, displayName } = req.body;
-  if (total_pts === undefined || !userId) {
+  if (total_pts === undefined || !userId || !displayName) {
     return res.status(400).json({ message: "Invalid stats data." });
   }
 
-  const userRef = db.collection("stats").doc(userId);
+  const stat = {
+    total_pts,
+    userId,
+    displayName,
+    timestamp: Date.now(),
+  };
 
   try {
-    const doc = await userRef.get();
-
-    if (doc.exists) {
-      const data = doc.data();
-      await userRef.update({
-        total_pts: (data.total_pts || 0) + total_pts,
-        total_games: (data.total_games || 0) + 1,
-        high_score: Math.max(data.high_score || 0, total_pts),
-      });
-    } else {
-      await userRef.set({
-        total_pts,
-        total_games: 1,
-        high_score: total_pts,
-        displayName: displayName || "Guest",
-      });
-    }
-
-    res.status(200).json({ message: "Stats saved/updated!" });
+    const docRef = await db.collection("stats").add(stat);
+    res.status(201).json({ message: "Stats saved!", statId: docRef.id, stat });
   } catch (err) {
     console.error("Error saving stats:", err);
     res.status(500).json({ message: "Failed to save stats." });
   }
 });
 
+// GET: Fetch summary for a specific user
 app.get("/api/stats/:userId", async (req, res) => {
   const { userId } = req.params;
   try {
-    const doc = await db.collection("stats").doc(userId).get();
-    if (!doc.exists) {
+    const snapshot = await db.collection("stats").where("userId", "==", userId).get();
+    if (snapshot.empty) {
       return res.status(200).json({ total_pts: 0, total_games: 0, high_score: 0 });
     }
-    res.status(200).json(doc.data());
+
+    const statsArray = snapshot.docs.map(doc => doc.data());
+    const total_pts = statsArray.reduce((sum, s) => sum + s.total_pts, 0);
+    const total_games = statsArray.length;
+    const high_score = Math.max(...statsArray.map(s => s.total_pts));
+
+    res.status(200).json({ total_pts, total_games, high_score });
   } catch (err) {
     console.error("Error fetching user stats:", err);
     res.status(500).json({ message: "Failed to fetch stats." });
   }
 });
 
-
-// GET: Fetch all stats
+// GET: Fetch all stats (leaderboard)
 app.get("/api/stats", async (req, res) => {
   try {
     const snapshot = await db.collection("stats").orderBy("total_pts", "desc").limit(100).get();
@@ -169,15 +163,14 @@ app.get("/api/stats", async (req, res) => {
     console.error("Error fetching leaderboard:", err);
     res.status(500).json({ message: "Failed to fetch leaderboard." });
   }
-}); 
+});
 
 // is it running
-
 app.get("/", (req, res) => {
   res.send("Backend is running 🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰");
-})
+});
 
-// Start server 
+// Start server
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
 });
