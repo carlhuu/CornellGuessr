@@ -1,30 +1,91 @@
-import React, { useState, useEffect } from 'react';
-import { GoogleMap, Marker, useJsApiLoader } from '@react-google-maps/api';
+import React, { useState, useEffect } from "react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import { useAuth } from "../auth/AuthUserProvider";
+import { signIn } from "../auth/auth";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const images = [
-  { url: '/game_images/low-rise-7.png', location: { lat: 42.456237, lng: -76.475352 } },
-  { url: '/game_images/botanical-gardens.png', location: { lat: 42.449551, lng: -76.472359 } },
-  { url: '/game_images/trillium.png', location: { lat: 42.448071, lng: -76.479248 } },
-  { url: '/game_images/noyes-gym.png', location: { lat: 42.446518, lng: -76.488033 } },
-  { url: '/game_images/cocktail-lounge.png', location: { lat: 42.447868, lng: -76.485291 } },
-  { url: '/game_images/baker.png', location: { lat: 42.450414, lng: -76.481873 } },
-  { url: '/game_images/bartels.png', location: { lat: 42.445329, lng: -76.485291 } },
-  { url: '/game_images/barton.png', location: { lat: 42.445803, lng: -76.480988 } },
-  { url: '/game_images/duffield.png', location: { lat: 42.444457, lng: -76.482602 } },
-  { url: '/game_images/gates.png', location: { lat: 42.445034, lng: -76.481229 } },
-  { url: '/game_images/hollister.png', location: { lat: 42.444211, lng: -76.484388 } },
-  { url: '/game_images/klarman.png', location: { lat: 42.449154, lng: -76.483116 } },
-  { url: '/game_images/morrison.png', location: { lat: 42.455644, lng: -76.479270 } },
-  { url: '/game_images/newman.png', location: { lat: 42.452892, lng: -76.477716 } },
-  { url: '/game_images/olin.png', location: { lat: 42.447906, lng: -76.484661 } },
-  { url: '/game_images/psb.png', location: { lat: 42.449799, lng: -76.481368 } },
-  { url: '/game_images/rhodes.png', location: { lat: 42.443749, lng: -76.481773 } },
-  { url: '/game_images/rpcc.png', location: { lat: 42.456045, lng: -76.477399 } },
-  { url: '/game_images/statler.png', location: { lat: 42.445465, lng: -76.481906 } },
-  { url: '/game_images/tang.png', location: { lat: 42.444052, lng: -76.483804 } },
+  {
+    url: "/game_images/low-rise-7.png",
+    location: { lat: 42.456237, lng: -76.475352 },
+  },
+  {
+    url: "/game_images/botanical-gardens.png",
+    location: { lat: 42.449551, lng: -76.472359 },
+  },
+  {
+    url: "/game_images/trillium.png",
+    location: { lat: 42.448071, lng: -76.479248 },
+  },
+  {
+    url: "/game_images/noyes-gym.png",
+    location: { lat: 42.446518, lng: -76.488033 },
+  },
+  {
+    url: "/game_images/cocktail-lounge.png",
+    location: { lat: 42.447868, lng: -76.485291 },
+  },
+  {
+    url: "/game_images/baker.png",
+    location: { lat: 42.450414, lng: -76.481873 },
+  },
+  {
+    url: "/game_images/bartels.png",
+    location: { lat: 42.445329, lng: -76.485291 },
+  },
+  {
+    url: "/game_images/barton.png",
+    location: { lat: 42.445803, lng: -76.480988 },
+  },
+  {
+    url: "/game_images/duffield.png",
+    location: { lat: 42.444457, lng: -76.482602 },
+  },
+  {
+    url: "/game_images/gates.png",
+    location: { lat: 42.445034, lng: -76.481229 },
+  },
+  {
+    url: "/game_images/hollister.png",
+    location: { lat: 42.444211, lng: -76.484388 },
+  },
+  {
+    url: "/game_images/klarman.png",
+    location: { lat: 42.449154, lng: -76.483116 },
+  },
+  {
+    url: "/game_images/morrison.png",
+    location: { lat: 42.455644, lng: -76.47927 },
+  },
+  {
+    url: "/game_images/newman.png",
+    location: { lat: 42.452892, lng: -76.477716 },
+  },
+  {
+    url: "/game_images/olin.png",
+    location: { lat: 42.447906, lng: -76.484661 },
+  },
+  {
+    url: "/game_images/psb.png",
+    location: { lat: 42.449799, lng: -76.481368 },
+  },
+  {
+    url: "/game_images/rhodes.png",
+    location: { lat: 42.443749, lng: -76.481773 },
+  },
+  {
+    url: "/game_images/rpcc.png",
+    location: { lat: 42.456045, lng: -76.477399 },
+  },
+  {
+    url: "/game_images/statler.png",
+    location: { lat: 42.445465, lng: -76.481906 },
+  },
+  {
+    url: "/game_images/tang.png",
+    location: { lat: 42.444052, lng: -76.483804 },
+  },
 ];
 
 const imageStyle: React.CSSProperties = {
@@ -40,7 +101,8 @@ const mapContainerStyle: React.CSSProperties = {
   marginTop: "20px",
 };
 
-const shuffleArray = (array: typeof images) => [...array].sort(() => Math.random() - 0.5);
+const shuffleArray = (array: typeof images) =>
+  [...array].sort(() => Math.random() - 0.5);
 
 const saveGameState = (state: object) => {
   localStorage.setItem("cornellguessrGame", JSON.stringify(state));
@@ -62,13 +124,16 @@ const Game: React.FC = () => {
 
   const saved = loadGameState();
 
-  const [shuffledImages, setShuffledImages] = useState(saved?.shuffledImages || shuffleArray(images));
+  const [shuffledImages, setShuffledImages] = useState(
+    saved?.shuffledImages || shuffleArray(images)
+  );
   const [round, setRound] = useState(saved?.round || 1);
   const [guess, setGuess] = useState(saved?.guess || null);
   const [showResult, setShowResult] = useState(saved?.showResult || false);
   const [score, setScore] = useState(saved?.score || 0);
   const [curr, setCurr] = useState(saved?.curr || false);
   const [currentImage, setCurrentImage] = useState(shuffledImages[round - 1]);
+  const [submitting, setSubmitting] = useState(false);
 
   const { user } = useAuth();
   const userId = user?.uid || "Guest";
@@ -91,9 +156,11 @@ const Game: React.FC = () => {
     const R = 6371;
     const dLat = toRad(currentImage.location.lat - guess.lat);
     const dLon = toRad(currentImage.location.lng - guess.lng);
-    const a = Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(guess.lat)) * Math.cos(toRad(currentImage.location.lat)) *
-      Math.sin(dLon / 2) ** 2;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(guess.lat)) *
+        Math.cos(toRad(currentImage.location.lat)) *
+        Math.sin(dLon / 2) ** 2;
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -122,25 +189,34 @@ const Game: React.FC = () => {
     clearGameState();
   };
 
-  const submitGuessToBackend = () => {
-    if (!guess) return;
-    fetch(`${backendUrl}/api/guesses`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        lat: guess.lat,
-        lng: guess.lng,
-        userId,
-        displayName: user?.displayName || "Guest"
-      }),
-    })
-      .then(res => res.json())
-      .then(() => {
-        const distance = calculateDistance();
-        const roundScore = calculateScore(distance);
-        setScore((prev: number) => prev + roundScore);
-        setShowResult(true);
+  const submitGuessToBackend = async () => {
+    if (!guess || submitting) return;
+    setSubmitting(true);
+
+    try {
+      const res = await fetch(`${backendUrl}/api/guesses`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lat: guess.lat,
+          lng: guess.lng,
+          userId,
+          displayName: user?.displayName || "Guest",
+        }),
       });
+
+      if (!res.ok) throw new Error("Failed to submit guess");
+
+      const distance = calculateDistance();
+      const roundScore = calculateScore(distance);
+      setScore((prev: number) => prev + roundScore);
+      setShowResult(true);
+    } catch (err) {
+      console.error("Error submitting guess:", err);
+      alert("Failed to submit guess. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const submitStatsToBackend = () => {
@@ -150,7 +226,7 @@ const Game: React.FC = () => {
       body: JSON.stringify({
         total_pts: score,
         userId,
-        displayName: user?.displayName || "Guest"
+        displayName: user?.displayName || "Guest",
       }),
     });
   };
@@ -170,7 +246,7 @@ const Game: React.FC = () => {
           mapContainerStyle={mapContainerStyle}
           center={{ lat: 42.447, lng: -76.484 }}
           zoom={16}
-          onClick={onMapClick}
+          onClick={showResult ? undefined : onMapClick}
         >
           {guess && <Marker position={guess} />}
           {showResult && <Marker position={currentImage.location} />}
@@ -179,11 +255,12 @@ const Game: React.FC = () => {
         {!showResult && (
           <center className="padded-vert">
             <button
-              className={`submitBtn ${!guess ? "disabled" : ""}`}
+              className={`submitBtn ${!guess || submitting ? "disabled" : ""}`}
               onClick={submitGuessToBackend}
-              disabled={!guess}
+              disabled={!guess || submitting}
+              
             >
-              Submit Guess
+              {submitting ? "Submitting..." : "Submit Guess"}
             </button>
           </center>
         )}
@@ -194,12 +271,16 @@ const Game: React.FC = () => {
             <p>Round Score: {calculateScore(calculateDistance())} points</p>
             <p>Total Score: {score} points</p>
             {round < 5 ? (
-              <button className="submitBtn" onClick={handleNextRound}>Next Round</button>
+              <button className="submitBtn" onClick={handleNextRound}>
+                Next Round
+              </button>
             ) : (
               <>
                 {submitStatsToBackend()}
                 <p>Game Over! Final Score: {score}</p>
-                <button className="submitBtn" onClick={reset}>Play Again</button>
+                <button className="submitBtn" onClick={reset}>
+                  Play Again
+                </button>
               </>
             )}
           </center>
@@ -211,7 +292,16 @@ const Game: React.FC = () => {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <center className="padded-vert">
-        <button className="submitBtn" onClick={() => setCurr(true)}>
+        <button
+          className="submitBtn"
+          onClick={() => {
+            if (!user) {
+              signIn();
+            } else {
+              setCurr(true);
+            }
+          }}
+        >
           {user ? "Start Game" : "Log in to start playing!"}
         </button>
       </center>
