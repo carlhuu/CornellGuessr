@@ -170,6 +170,11 @@ app.get("/", (req, res) => {
   res.send("Backend is running 🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰🥰");
 });
 
+// 🏓
+app.get("/ping", (req, res) => {
+  res.status(200).json("pong")
+})
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Backend server running at http://localhost:${PORT}`);
