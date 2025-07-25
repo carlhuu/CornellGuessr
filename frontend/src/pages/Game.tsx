@@ -237,9 +237,15 @@ const Game: React.FC = () => {
     return (
       <div>
         <center>
+          <div style={{ maxWidth: "60%", margin: "0 auto" }}>
+            <h6 style={{ textAlign: "center" }}>Note: you may see a notice that says "This page can't load Google maps correctly," and the map may be watermarked.
+              This is because I don't want to activate billing for Firebase. You should still be able to make guesses. Sorry 🤦‍♂️
+            </h6>
+          </div>
           <h1 style={{ padding: "1%" }}>Round {round}</h1>
           <h4>Score: {score}</h4>
           <h2>Where is this?</h2>
+          
         </center>
         <img src={currentImage.url} style={imageStyle} />
         <GoogleMap
