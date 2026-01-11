@@ -294,7 +294,6 @@ const Game: React.FC = () => {
       </div>
     );
   }
-
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <center className="padded-vert">
