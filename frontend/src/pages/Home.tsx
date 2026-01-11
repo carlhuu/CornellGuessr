@@ -1,6 +1,6 @@
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
-import Spiral from "../components/spiral";
+//import Spiral from "../components/spiral";
 import p1 from "/homepage/pic1.jpg";
 import p2 from "/homepage/pic2.jpg";
 import p3 from "/homepage/pic3.jpg";
