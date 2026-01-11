@@ -1,16 +1,190 @@
-import { useState } from "react";
+import {
+  createStyles,
+  Header,
+  Container,
+  Group,
+  Burger,
+  rem,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { Link, useLocation } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
 import { useAuth } from "../auth/AuthUserProvider";
+
+const useStyles = createStyles((theme) => ({
+  header: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: "100%",
+    maxWidth: "1400px",
+    padding: "0 2rem",
+  },
+
+  logo: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    textDecoration: "none",
+    transition: "transform 0.2s ease",
+    "&:hover": {
+      transform: "scale(1.05)",
+    },
+  },
+
+  brandName: {
+    color: "white",
+    fontSize: "1.5rem",
+    fontWeight: 700,
+    letterSpacing: "-0.5px",
+  },
+
+  links: {
+    display: "flex",
+    gap: "0.5rem",
+    [theme.fn.smallerThan("sm")]: {
+      display: "none",
+    },
+  },
+
+  burger: {
+    [theme.fn.largerThan("sm")]: {
+      display: "none",
+    },
+  },
+
+  link: {
+    display: "block",
+    lineHeight: 1,
+    padding: `${rem(10)} ${rem(16)}`,
+    borderRadius: theme.radius.md,
+    textDecoration: "none",
+    color: "rgba(255, 255, 255, 0.85)",
+    fontSize: theme.fontSizes.md,
+    fontWeight: 500,
+    transition: "all 0.2s ease",
+    backgroundColor: "transparent",
+
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.15)",
+      color: "white",
+    },
+  },
+
+  linkActive: {
+    "&, &:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      color: "white",
+      fontWeight: 600,
+      backdropFilter: "blur(10px)",
+    },
+  },
+
+  userSection: {
+    display: "flex",
+    alignItems: "center",
+    gap: "1rem",
+    paddingLeft: "1rem",
+    borderLeft: "1px solid rgba(255, 255, 255, 0.3)",
+    [theme.fn.smallerThan("sm")]: {
+      display: "none",
+    },
+  },
+
+  userName: {
+    color: "white",
+    fontSize: "0.95rem",
+    fontWeight: 500,
+    margin: 0,
+  },
+
+  loginButton: {
+    background: "white",
+    color: "#B31B1B",
+    border: "none",
+    padding: "0.6rem 1.5rem",
+    borderRadius: theme.radius.md,
+    fontSize: "0.95rem",
+    fontWeight: 600,
+    cursor: "pointer",
+    transition: "all 0.2s ease",
+    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+
+    "&:hover": {
+      transform: "translateY(-2px)",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+    },
+  },
+
+  mobileMenu: {
+    position: "absolute",
+    top: "70px",
+    left: 0,
+    right: 0,
+    background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    padding: "1rem",
+    animation: "slideDown 0.3s ease",
+  },
+
+  mobileLink: {
+    display: "block",
+    color: "rgba(255, 255, 255, 0.85)",
+    textDecoration: "none",
+    padding: "1rem",
+    borderRadius: theme.radius.md,
+    fontSize: theme.fontSizes.md,
+    fontWeight: 500,
+    backgroundColor: "transparent",
+    marginBottom: "0.5rem",
+    transition: "all 0.2s ease",
+
+    "&:hover": {
+      backgroundColor: "rgba(255, 255, 255, 0.15)",
+    },
+  },
+
+  mobileLinkActive: {
+    color: "white",
+    fontWeight: 600,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+  },
+
+  mobileUserSection: {
+    borderTop: "1px solid rgba(255, 255, 255, 0.3)",
+    paddingTop: "1rem",
+    marginTop: "0.5rem",
+  },
+
+  mobileUserName: {
+    color: "white",
+    margin: "0 0 1rem 1rem",
+    fontSize: "0.95rem",
+  },
+
+  mobileLoginButton: {
+    width: "100%",
+    background: "white",
+    color: "#B31B1B",
+    border: "none",
+    padding: "0.75rem",
+    borderRadius: theme.radius.md,
+    fontSize: "1rem",
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+}));
 
 interface HeaderSimpleProps {
   links: { link: string; label: string }[];
 }
 
 export function HeaderSimple({ links }: HeaderSimpleProps) {
-  const [opened, setOpened] = useState(false);
+  const [opened, { toggle, close }] = useDisclosure(false);
+  const { classes, cx } = useStyles();
   const location = useLocation();
   const activePath = location.pathname;
+
   const { user } = useAuth();
 
   const handleLoginClick = async () => {
@@ -21,38 +195,30 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
     }
   };
 
-  const toggle = () => setOpened(!opened);
-  const close = () => setOpened(false);
+  const items = links.map((link) => (
+    <Link
+      key={link.label}
+      to={link.link}
+      className={cx(classes.link, {
+        [classes.linkActive]: activePath === link.link,
+      })}
+      onClick={close}
+    >
+      {link.label}
+    </Link>
+  ));
 
   return (
-    <header style={{
-      height: "70px",
-      background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-      boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-      top: 0,
-      zIndex: 1000,
-    }}>
-      <div style={{
-        maxWidth: "1400px",
-        margin: "0 auto",
-        padding: "0 2rem",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}>
-        <Link 
-          to="/" 
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            textDecoration: "none",
-            transition: "transform 0.2s ease",
-          }}
-          onMouseEnter={(e) => e.currentTarget.style.transform = "scale(1.05)"}
-          onMouseLeave={(e) => e.currentTarget.style.transform = "scale(1)"}
-        >
+    <Header 
+      height={70}
+      sx={{
+        background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+        border: "none",
+      }}
+    >
+      <Container className={classes.header} size="xl">
+        <Link to="/" className={classes.logo}>
           <img
             src="big_red.png"
             alt="Logo"
@@ -62,217 +228,54 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
               filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
             }}
           />
-          <span style={{
-            color: "white",
-            fontSize: "1.5rem",
-            fontWeight: "700",
-            letterSpacing: "-0.5px",
-          }}>
-            CornellGuessr
-          </span>
+          <span className={classes.brandName}>CornellGuessr</span>
         </Link>
 
-        <nav style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "2rem",
-        }}>
-          <div style={{
-            display: "flex",
-            gap: "0.5rem",
-          }}
-          className="desktop-nav"
-          >
-            {links.map((link) => (
-              <Link
-                key={link.label}
-                to={link.link}
-                onClick={close}
-                style={{
-                  color: activePath === link.link ? "white" : "rgba(255, 255, 255, 0.85)",
-                  textDecoration: "none",
-                  padding: "0.5rem 1rem",
-                  borderRadius: "8px",
-                  fontSize: "1rem",
-                  fontWeight: activePath === link.link ? "600" : "500",
-                  backgroundColor: activePath === link.link ? "rgba(255, 255, 255, 0.2)" : "transparent",
-                  transition: "all 0.2s ease",
-                  backdropFilter: activePath === link.link ? "blur(10px)" : "none",
-                }}
-                onMouseEnter={(e) => {
-                  if (activePath !== link.link) {
-                    e.currentTarget.style.backgroundColor = "rgba(255, 255, 255, 0.15)";
-                    e.currentTarget.style.color = "white";
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (activePath !== link.link) {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.color = "rgba(255, 255, 255, 0.85)";
-                  }
-                }}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+        <Group spacing="xl" style={{ flex: 1, justifyContent: "flex-end" }}>
+          <Group spacing={5} className={classes.links}>
+            {items}
+          </Group>
 
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "1rem",
-            paddingLeft: "1rem",
-            borderLeft: "1px solid rgba(255, 255, 255, 0.3)",
-          }}
-          className="desktop-nav"
-          >
-            {user && (
-              <span style={{
-                color: "white",
-                fontSize: "0.95rem",
-                fontWeight: "500",
-              }}>
-                Hello, {user.displayName}
-              </span>
-            )}
-            <button
-              onClick={handleLoginClick}
-              style={{
-                background: "white",
-                color: "#B31B1B",
-                border: "none",
-                padding: "0.6rem 1.5rem",
-                borderRadius: "8px",
-                fontSize: "0.95rem",
-                fontWeight: "600",
-                cursor: "pointer",
-                transition: "all 0.2s ease",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-2px)";
-                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.2)";
-              }}
-            >
+          <div className={classes.userSection}>
+            {user && <p className={classes.userName}>Hello, {user.displayName}</p>}
+            <button onClick={handleLoginClick} className={classes.loginButton}>
               {user ? "Sign out" : "Log in"}
             </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
+          <Burger
+            opened={opened}
             onClick={toggle}
-            className="mobile-burger"
-            style={{
-              display: "none",
-              background: "rgba(255, 255, 255, 0.2)",
-              border: "2px solid white",
-              borderRadius: "8px",
-              padding: "0.5rem",
-              cursor: "pointer",
-              width: "40px",
-              height: "40px",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              gap: "4px",
-            }}
-          >
-            <span style={{
-              width: "20px",
-              height: "2px",
-              backgroundColor: "white",
-              display: "block",
-              transition: "all 0.3s ease",
-              transform: opened ? "rotate(45deg) translateY(6px)" : "none",
-            }} />
-            <span style={{
-              width: "20px",
-              height: "2px",
-              backgroundColor: "white",
-              display: "block",
-              transition: "all 0.3s ease",
-              opacity: opened ? 0 : 1,
-            }} />
-            <span style={{
-              width: "20px",
-              height: "2px",
-              backgroundColor: "white",
-              display: "block",
-              transition: "all 0.3s ease",
-              transform: opened ? "rotate(-45deg) translateY(-6px)" : "none",
-            }} />
-          </button>
-        </nav>
-      </div>
+            className={classes.burger}
+            size="sm"
+            color="white"
+          />
+        </Group>
+      </Container>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       {opened && (
-        <div
-          style={{
-            position: "absolute",
-            top: "70px",
-            left: 0,
-            right: 0,
-            background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
-            padding: "1rem",
-            animation: "slideDown 0.3s ease",
-          }}
-        >
+        <div className={classes.mobileMenu}>
           {links.map((link) => (
             <Link
               key={link.label}
               to={link.link}
+              className={cx(classes.mobileLink, {
+                [classes.mobileLinkActive]: activePath === link.link,
+              })}
               onClick={close}
-              style={{
-                display: "block",
-                color: activePath === link.link ? "white" : "rgba(255, 255, 255, 0.85)",
-                textDecoration: "none",
-                padding: "1rem",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                fontWeight: activePath === link.link ? "600" : "500",
-                backgroundColor: activePath === link.link ? "rgba(255, 255, 255, 0.2)" : "transparent",
-                marginBottom: "0.5rem",
-                transition: "all 0.2s ease",
-              }}
             >
               {link.label}
             </Link>
           ))}
           
-          <div style={{
-            borderTop: "1px solid rgba(255, 255, 255, 0.3)",
-            paddingTop: "1rem",
-            marginTop: "0.5rem",
-          }}>
+          <div className={classes.mobileUserSection}>
             {user && (
-              <p style={{
-                color: "white",
-                margin: "0 0 1rem 1rem",
-                fontSize: "0.95rem",
-              }}>
+              <p className={classes.mobileUserName}>
                 Hello, {user.displayName}
               </p>
             )}
-            <button
-              onClick={handleLoginClick}
-              style={{
-                width: "100%",
-                background: "white",
-                color: "#B31B1B",
-                border: "none",
-                padding: "0.75rem",
-                borderRadius: "8px",
-                fontSize: "1rem",
-                fontWeight: "600",
-                cursor: "pointer",
-              }}
-            >
+            <button onClick={handleLoginClick} className={classes.mobileLoginButton}>
               {user ? "Sign out" : "Log in"}
             </button>
           </div>
@@ -280,15 +283,6 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
       )}
 
       <style>{`
-        @media (max-width: 768px) {
-          .desktop-nav {
-            display: none !important;
-          }
-          .mobile-burger {
-            display: flex !important;
-          }
-        }
-
         @keyframes slideDown {
           from {
             opacity: 0;
@@ -300,6 +294,6 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
           }
         }
       `}</style>
-    </header>
+    </Header>
   );
 }
