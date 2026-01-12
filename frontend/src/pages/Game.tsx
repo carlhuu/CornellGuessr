@@ -88,17 +88,12 @@ const images = [
   },
 ];
 
-const imageStyle: React.CSSProperties = {
-  maxWidth: "80%",
-  height: "auto",
-  display: "block",
-  margin: "20px auto",
-};
 
 const mapContainerStyle: React.CSSProperties = {
-  width: "100vw",
-  height: "60vh",
-  marginTop: "20px",
+  width: "100%",
+  height: "500px",
+  borderRadius: "12px",
+  overflow: "hidden",
 };
 
 const shuffleArray = (array: typeof images) =>
@@ -235,83 +230,379 @@ const Game: React.FC = () => {
 
   if (user && curr) {
     return (
-      <div>
-        <center>
-          <div style={{ maxWidth: "60%", margin: "0 auto" }}>
-            <h6 style={{ textAlign: "center" }}>Note: you may see a notice that says "This page can't load Google maps correctly," and the map may be watermarked.
-              This is because I don't want to activate billing for Firebase. You should still be able to make guesses. Sorry 🤦‍♂️
-            </h6>
+      <div style={{
+      minHeight: "calc(100vh - 70px)",
+      width: "100vw",
+      background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+      padding: "40px 20px",
+    }}>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        {/* Header Info */}
+        <div style={{
+          background: "white",
+          borderRadius: "16px",
+          padding: "20px 30px",
+          marginBottom: "30px",
+          boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "20px",
+        }}>
+          <div>
+            <h2 style={{
+              fontSize: "1.8rem",
+              fontWeight: "700",
+              color: "#B31B1B",
+              margin: 0,
+            }}>
+              Round {round} of 5
+            </h2>
           </div>
-          <h1 style={{ padding: "1%" }}>Round {round}</h1>
-          <h4>Score: {score}</h4>
-          <h2>Where is this?</h2>
-          
-        </center>
-        <img src={currentImage.url} style={imageStyle} />
-        <GoogleMap
-          mapContainerStyle={mapContainerStyle}
-          center={{ lat: 42.447, lng: -76.484 }}
-          zoom={16}
-          onClick={showResult ? undefined : onMapClick}
-        >
-          {guess && <Marker position={guess} />}
-          {showResult && <Marker position={currentImage.location} />}
-        </GoogleMap>
+          <div style={{
+            background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+            color: "white",
+            padding: "12px 30px",
+            borderRadius: "12px",
+            fontWeight: "600",
+            fontSize: "1.2rem",
+          }}>
+            Score: {score}
+          </div>
+        </div>
 
+        {/* Map Note */}
+        <div style={{
+          background: "#fff3cd",
+          border: "1px solid #ffc107",
+          borderRadius: "12px",
+          padding: "15px 20px",
+          marginBottom: "30px",
+          fontSize: "0.95rem",
+          color: "#856404",
+        }}>
+          <strong>Note:</strong> Note: you may see a notice that says "This page can't load Google maps correctly," and the map may be watermarked.
+              This is because we don't want to activate billing for Firebase. You should still be able to make guesses. Sorry 🤦‍♂️
+        </div>
+
+        {/* Main Content */}
+        <div style={{
+          display: "flex",
+          gap: "30px",
+          marginBottom: "30px",
+          flexWrap: "wrap",
+        }}
+        className="game-grid"
+        >
+          {/* Image Section */}
+          <div style={{
+            background: "white",
+            borderRadius: "16px",
+            padding: "30px",
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            flex: "1 1 450px",  // Added
+            minWidth: "300px",
+          }}>
+            <h3 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#333",
+              marginBottom: "20px",
+              textAlign: "center",
+            }}>
+              Where is this?
+            </h3>
+            <img 
+              src={currentImage.url} 
+              alt="Location to guess"
+              style={{
+                width: "100%",
+                height: "auto",
+                borderRadius: "12px",
+                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+              }}
+            />
+          </div>
+
+          {/* Map Section */}
+          <div style={{
+            background: "white",
+            borderRadius: "16px",
+            padding: "30px",
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            flex: "1 1 450px",  // Added
+            minWidth: "300px",
+          }}>
+            <h3 style={{
+              fontSize: "1.5rem",
+              fontWeight: "600",
+              color: "#333",
+              marginBottom: "20px",
+              textAlign: "center",
+            }}>
+              Click on the map to guess
+            </h3>
+            <GoogleMap
+              mapContainerStyle={mapContainerStyle}
+              center={{ lat: 42.447, lng: -76.484 }}
+              zoom={15}
+              onClick={showResult ? undefined : onMapClick}
+            >
+              {guess && <Marker position={guess} label="Your Guess" />}
+              {showResult && <Marker position={currentImage.location} label="Actual Location" />}
+            </GoogleMap>
+          </div>
+        </div>
+
+        {/* Actions and Results */}
         {!showResult && (
-          <center className="padded-vert">
+          <div style={{ textAlign: "center" }}>
             <button
-              className={`submitBtn ${!guess || submitting ? "disabled" : ""}`}
               onClick={submitGuessToBackend}
               disabled={!guess || submitting}
-              
+              style={{
+                background: !guess || submitting 
+                  ? "#ccc" 
+                  : "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+                color: "white",
+                border: "none",
+                padding: "1rem 3rem",
+                borderRadius: "12px",
+                fontSize: "1.2rem",
+                fontWeight: "600",
+                cursor: !guess || submitting ? "not-allowed" : "pointer",
+                boxShadow: "0 4px 15px rgba(0, 0, 0, 0.2)",
+                transition: "all 0.3s ease",
+                opacity: !guess || submitting ? 0.6 : 1,
+              }}
+              onMouseEnter={(e) => {
+                if (guess && !submitting) {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(179, 27, 27, 0.4)";
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 4px 15px rgba(0, 0, 0, 0.2)";
+              }}
             >
               {submitting ? "Submitting..." : "Submit Guess"}
             </button>
-          </center>
+          </div>
         )}
 
         {showResult && (
-          <center className="padded-vert">
-            <p>Distance: {calculateDistance().toFixed(2)} km</p>
-            <p>Round Score: {calculateScore(calculateDistance())} points</p>
-            <p>Total Score: {score} points</p>
+          <div style={{
+            background: "white",
+            borderRadius: "16px",
+            padding: "40px",
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            textAlign: "center",
+          }}>
+            <h2 style={{
+              fontSize: "2rem",
+              fontWeight: "700",
+              color: "#B31B1B",
+              marginBottom: "30px",
+            }}>
+              Round {round} Results
+            </h2>
+            
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: "20px",
+              marginBottom: "40px",
+            }}>
+              <div style={{
+                background: "#f8f9fa",
+                padding: "20px",
+                borderRadius: "12px",
+              }}>
+                <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: "5px" }}>
+                  Distance
+                </div>
+                <div style={{ fontSize: "1.8rem", fontWeight: "700", color: "#333" }}>
+                  {calculateDistance().toFixed(2)} km
+                </div>
+              </div>
+              
+              <div style={{
+                background: "#f8f9fa",
+                padding: "20px",
+                borderRadius: "12px",
+              }}>
+                <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: "5px" }}>
+                  Round Score
+                </div>
+                <div style={{ fontSize: "1.8rem", fontWeight: "700", color: "#B31B1B" }}>
+                  {calculateScore(calculateDistance())} pts
+                </div>
+              </div>
+              
+              <div style={{
+                background: "#f8f9fa",
+                padding: "20px",
+                borderRadius: "12px",
+              }}>
+                <div style={{ fontSize: "0.9rem", color: "#666", marginBottom: "5px" }}>
+                  Total Score
+                </div>
+                <div style={{ fontSize: "1.8rem", fontWeight: "700", color: "#333" }}>
+                  {score} pts
+                </div>
+              </div>
+            </div>
+
             {round < 5 ? (
-              <button className="submitBtn" onClick={handleNextRound}>
-                Next Round
+              <button
+                onClick={handleNextRound}
+                style={{
+                  background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+                  color: "white",
+                  border: "none",
+                  padding: "1rem 3rem",
+                  borderRadius: "12px",
+                  fontSize: "1.2rem",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-2px)";
+                  e.currentTarget.style.boxShadow = "0 6px 20px rgba(179, 27, 27, 0.4)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 15px rgba(179, 27, 27, 0.3)";
+                }}
+              >
+                Next Round →
               </button>
             ) : (
               <>
                 {submitStatsToBackend()}
-                <p>Game Over! Final Score: {score}</p>
-                <button className="submitBtn" onClick={reset}>
+                <h3 style={{
+                  fontSize: "2.5rem",
+                  fontWeight: "700",
+                  color: "#B31B1B",
+                  marginBottom: "10px",
+                }}>
+                  🎉 Game Over!
+                </h3>
+                <p style={{
+                  fontSize: "1.3rem",
+                  color: "#666",
+                  marginBottom: "30px",
+                }}>
+                  Final Score: <strong style={{ color: "#B31B1B" }}>{score} points</strong>
+                </p>
+                <button
+                  onClick={reset}
+                  style={{
+                    background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+                    color: "white",
+                    border: "none",
+                    padding: "1rem 3rem",
+                    borderRadius: "12px",
+                    fontSize: "1.2rem",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                    e.currentTarget.style.boxShadow = "0 6px 20px rgba(179, 27, 27, 0.4)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.boxShadow = "0 4px 15px rgba(179, 27, 27, 0.3)";
+                  }}
+                >
                   Play Again
                 </button>
               </>
             )}
-          </center>
+          </div>
         )}
+      </div>
+    </div>
+    );
+  }
+  if (!user || !curr) {
+    return (
+      <div style={{
+        minHeight: "calc(100vh - 70px)",
+        width: "100vw",
+        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "40px 20px",
+      }}>
+        <div style={{
+          background: "white",
+          borderRadius: "20px",
+          padding: "60px 40px",
+          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
+          maxWidth: "500px",
+          textAlign: "center",
+        }}>
+          <h1 style={{
+            fontSize: "2.5rem",
+            fontWeight: "700",
+            color: "#B31B1B",
+            marginBottom: "20px",
+          }}>
+            Ready to Play?
+          </h1>
+          <p style={{
+            fontSize: "1.1rem",
+            color: "#666",
+            marginBottom: "40px",
+            lineHeight: "1.6",
+          }}>
+            Test your knowledge of Cornell's campus by guessing locations from photos. 
+            Can you get a perfect score?
+          </p>
+          <button
+            onClick={() => {
+              if (!user) {
+                signIn();
+              } else {
+                setCurr(true);
+              }
+            }}
+            style={{
+              background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
+              color: "white",
+              border: "none",
+              padding: "1rem 3rem",
+              borderRadius: "12px",
+              fontSize: "1.2rem",
+              fontWeight: "600",
+              cursor: "pointer",
+              boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
+              transition: "all 0.3s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+              e.currentTarget.style.boxShadow = "0 6px 20px rgba(179, 27, 27, 0.4)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 4px 15px rgba(179, 27, 27, 0.3)";
+            }}
+          >
+            {user ? "Start Game" : "Log in to Start Playing"}
+          </button>
+        </div>
       </div>
     );
   }
-  return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      <center className="padded-vert">
-        <button
-          className="submitBtn"
-          onClick={() => {
-            if (!user) {
-              signIn();
-            } else {
-              setCurr(true);
-            }
-          }}
-        >
-          {user ? "Start Game" : "Log in to start playing!"}
-        </button>
-      </center>
-    </div>
-  );
 };
 
 export default Game;

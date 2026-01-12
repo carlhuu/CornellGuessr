@@ -276,6 +276,18 @@ i {
     padding: 2rem 4rem;
     width: 100%;
 }
+.game-grid > div {
+    max-width: 550px;
+}
+  
+@media (max-width: 968px) {
+.game-grid {
+    flex-direction: column !important;
+}
+.game-grid > div {
+    max-width: 100%;
+}
+}
 
 #detail.loading {
     opacity: 0.25;
