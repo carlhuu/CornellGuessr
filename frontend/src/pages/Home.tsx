@@ -307,7 +307,7 @@ export default function HomePage() {
               Ready to find your way?
             </h2>
             <p style={{ ...sans, fontSize: 16, color: "#9b978f", margin: "14px 0 0" }}>
-              No account needed. Jump in as a guest and start guessing.
+              Sign in with your Google account to start playing.
             </p>
           </div>
           <Link to="/play" style={{ flexShrink: 0 }}>
