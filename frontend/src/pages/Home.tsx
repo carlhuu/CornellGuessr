@@ -1,165 +1,382 @@
-import ImageGallery from "react-image-gallery";
-import "react-image-gallery/styles/css/image-gallery.css";
-import p1 from "/homepage/pic1.jpg";
-import p3 from "/homepage/pic3.jpg";
-import p4 from "/homepage/pic4.jpg";
+import { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 
-const images = [
-  { original: p1 },
-  { original: p3 },
-  { original: p4 },
+const galleryItems = [
+  { img: "/homepage/pic1.jpg",  name: "Libe Slope" },
+  { img: "/game_images/baker.png",   name: "Baker Laboratory" },
+  { img: "/game_images/statler.png", name: "Statler Hall" },
+  { img: "/game_images/klarman.png", name: "Klarman Hall" },
+  { img: "/game_images/olin.png",    name: "Olin Library" },
 ];
-
-const glass = {
-  background: "rgba(255,255,255,.055)",
-  backdropFilter: "blur(24px)",
-  WebkitBackdropFilter: "blur(24px)",
-  border: "1px solid rgba(255,255,255,.1)",
-  boxShadow: "0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1)",
-} as React.CSSProperties;
-
-const pageBg: React.CSSProperties = {
-  minHeight: "100vh",
-  width: "100vw",
-  background: `
-    radial-gradient(circle at 18% 28%, rgba(179,27,27,.18) 0%, transparent 48%),
-    radial-gradient(circle at 82% 72%, rgba(63,81,181,.1)   0%, transparent 45%),
-    #090912
-  `,
-};
 
 const steps = [
-  { num: "1", title: "View Location",    desc: "See a photo of a spot on Cornell's campus." },
-  { num: "2", title: "Make Your Guess",  desc: "Click the map to pin where you think it is." },
-  { num: "3", title: "Score Points",     desc: "Closer guesses earn more points — aim for 1000!" },
+  {
+    num: "01",
+    title: "See the photo",
+    desc: "A single image from somewhere on Cornell's campus. No labels, no hints — just your memory.",
+  },
+  {
+    num: "02",
+    title: "Drop your pin",
+    desc: "Click the campus map exactly where you think the photo was taken.",
+  },
+  {
+    num: "03",
+    title: "Score the round",
+    desc: "The closer your pin, the more points. Five rounds, one shot at a perfect 5,000.",
+  },
 ];
 
-const arrowStyle: React.CSSProperties = {
-  background: "rgba(255,255,255,.12)",
-  backdropFilter: "blur(10px)",
-  border: "1px solid rgba(255,255,255,.15)",
-  borderRadius: "50%",
-  width: 38,
-  height: 38,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "1.3rem",
-  color: "white",
-  cursor: "pointer",
-  position: "absolute",
-  top: "50%",
-  transform: "translateY(-50%)",
-  zIndex: 10,
+const mono: React.CSSProperties = {
+  fontFamily: "'Geist Mono', monospace",
 };
 
-const renderLeftNav = (onClick: React.MouseEventHandler<HTMLButtonElement>) => (
-  <button type="button" style={{ ...arrowStyle, left: 12 }} onClick={onClick}>‹</button>
-);
-const renderRightNav = (onClick: React.MouseEventHandler<HTMLButtonElement>) => (
-  <button type="button" style={{ ...arrowStyle, right: 12 }} onClick={onClick}>›</button>
-);
+const serif: React.CSSProperties = {
+  fontFamily: "'Newsreader', serif",
+};
 
-const HomePage = () => (
-  <div style={{ ...pageBg, padding: "56px 20px 80px" }}>
-    {/* decorative orbs */}
-    <div style={{ position:"fixed", width:700, height:700, borderRadius:"50%", background:"radial-gradient(circle, rgba(179,27,27,.1) 0%, transparent 68%)", top:"30%", left:"10%", transform:"translate(-50%,-50%)", pointerEvents:"none", zIndex:0 }} />
-    <div style={{ position:"fixed", width:500, height:500, borderRadius:"50%", background:"radial-gradient(circle, rgba(63,81,181,.07) 0%, transparent 68%)", top:"60%", left:"80%", transform:"translate(-50%,-50%)", pointerEvents:"none", zIndex:0 }} />
+const sans: React.CSSProperties = {
+  fontFamily: "'Geist', sans-serif",
+};
 
-    <div style={{ maxWidth: 960, margin: "0 auto", position:"relative", zIndex:1 }} className="cg-page-enter">
+export default function HomePage() {
+  const heroImgRef = useRef<HTMLImageElement>(null);
 
-      {/* Hero */}
-      <div style={{ textAlign: "center", marginBottom: 56 }}>
+  // Parallax hero
+  useEffect(() => {
+    const onScroll = () => {
+      if (heroImgRef.current) {
+        const y = window.scrollY || 0;
+        heroImgRef.current.style.transform = `translateY(${y * 0.10}px) scale(1.05)`;
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Intersection observer reveals
+  useEffect(() => {
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+    if (!("IntersectionObserver" in window)) {
+      els.forEach(e => e.classList.add("in"));
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) {
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: "0px 0px -8% 0px" });
+    els.forEach(e => {
+      if (!e.classList.contains("in")) io.observe(e);
+    });
+    return () => io.disconnect();
+  }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#F6F4EF" }}>
+      <style>{`
+        [data-reveal] {
+          opacity: 0;
+          transform: translateY(34px);
+          transition: opacity 1s cubic-bezier(.2,.7,.3,1), transform 1s cubic-bezier(.2,.7,.3,1);
+        }
+        [data-reveal].in { opacity: 1; transform: none; }
+        .gcard { transition: transform .5s cubic-bezier(.2,.7,.3,1); }
+        .gcard:hover { transform: translateY(-6px); }
+        .gcard:hover img { transform: scale(1.06); }
+        .lift { transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s; }
+        .lift:hover { transform: translateY(-2px); }
+      `}</style>
+
+      {/* ── HERO ── */}
+      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "18px 32px 0" }}>
         <div style={{
-          width: 72, height: 72, borderRadius: 20, margin: "0 auto 28px",
-          background: "linear-gradient(135deg,#8B0000,#E53935)",
-          boxShadow: "0 10px 36px rgba(229,57,53,.55)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: "2rem",
-        }}>🐻</div>
-        <h1 className="cg-title" style={{ fontSize: "3.8rem", fontWeight: 800, marginBottom: 16, letterSpacing: "-.02em", lineHeight: 1.1 }}>
-          Welcome to CornellGuessr!
-        </h1>
-        <p style={{ fontSize: "1.15rem", color: "rgba(255,255,255,.45)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
-          Test your knowledge of Cornell's beautiful campus
-        </p>
-      </div>
-
-      {/* Gallery */}
-      <div style={{ ...glass, borderRadius: 20, overflow: "hidden", marginBottom: 48, padding: 0, boxShadow: "0 20px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)" }}>
-        <ImageGallery
-          items={images}
-          showFullscreenButton={false}
-          showPlayButton={false}
-          showNav={true}
-          showThumbnails={false}
-          autoPlay={true}
-          renderLeftNav={renderLeftNav}
-          renderRightNav={renderRightNav}
-        />
-      </div>
-
-      {/* How to Play */}
-      <div style={{ ...glass, borderRadius: 20, padding: "48px 40px" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:36, justifyContent:"center" }}>
-          <div style={{ width:8, height:8, borderRadius:"50%", background:"#E53935", boxShadow:"0 0 8px rgba(229,57,53,.9)" }} />
-          <h2 style={{ fontSize:"1.9rem", fontWeight:700, color:"white", margin:0, letterSpacing:"-.01em" }}>
-            How to Play
-          </h2>
-        </div>
-
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:20, marginBottom:36 }}>
-          {steps.map((s, i) => (
-            <div key={i} className="cg-stat" style={{ ...glass, borderRadius:16, padding:"28px 20px", textAlign:"center" }}>
-              <div style={{
-                width:60, height:60, borderRadius:"50%",
-                background:"linear-gradient(135deg,#8B0000,#E53935)",
-                boxShadow:"0 6px 20px rgba(229,57,53,.45)",
-                color:"white", fontSize:"1.5rem", fontWeight:800,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                margin:"0 auto 18px",
+          display: "grid",
+          gridTemplateColumns: "1.02fr .98fr",
+          gap: 54,
+          alignItems: "center",
+          minHeight: "78vh",
+        }}>
+          <div>
+            <div style={{ ...mono, fontSize: 12, letterSpacing: ".2em", color: "#B31B1B", marginBottom: 24 }}>
+              A CAMPUS GUESSING GAME
+            </div>
+            <h1 style={{
+              ...serif,
+              fontWeight: 600,
+              fontSize: "clamp(48px,6vw,74px)",
+              lineHeight: 1.0,
+              letterSpacing: "-.022em",
+              color: "#1B1A18",
+              margin: 0,
+            }}>
+              Think you know<br />
+              Cornell?<span style={{ fontStyle: "italic", fontWeight: 500, color: "#B31B1B" }}> Prove it.</span>
+            </h1>
+            <p style={{
+              ...sans,
+              fontSize: 18,
+              lineHeight: 1.65,
+              color: "#5c5953",
+              maxWidth: 440,
+              margin: "28px 0 0",
+            }}>
+              You'll see a photo from somewhere on campus — Libe Slope, the depths of Duffield, a corner of the Botanic Gardens. Drop a pin. The closer you land, the more you score.
+            </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 26, marginTop: 38 }}>
+              <Link to="/play">
+                <button className="cg-btn lift" style={{
+                  ...sans,
+                  fontSize: 15,
+                  fontWeight: 600,
+                  color: "#fff",
+                  background: "#B31B1B",
+                  border: "none",
+                  padding: "16px 34px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  boxShadow: "0 12px 26px -8px rgba(179,27,27,.5)",
+                }}>
+                  Play now
+                </button>
+              </Link>
+              <a href="#how" style={{
+                ...sans,
+                fontSize: 15,
+                fontWeight: 500,
+                color: "#1B1A18",
+                textDecoration: "none",
+                borderBottom: "1.5px solid rgba(27,26,24,.25)",
+                paddingBottom: 2,
               }}>
-                {s.num}
-              </div>
-              <h3 style={{ color:"white", fontSize:"1.05rem", fontWeight:700, marginBottom:8 }}>{s.title}</h3>
-              <p style={{ color:"rgba(255,255,255,.45)", fontSize:".9rem", lineHeight:1.6, margin:0 }}>{s.desc}</p>
+                How it works
+              </a>
+            </div>
+            <div style={{ ...mono, fontSize: 12, color: "#908d86", marginTop: 42, letterSpacing: ".02em" }}>
+              5 ROUNDS &nbsp;·&nbsp; 1,000 POINTS A ROUND
+            </div>
+          </div>
+
+          <div style={{
+            position: "relative",
+            borderRadius: 14,
+            overflow: "hidden",
+            boxShadow: "0 40px 80px -28px rgba(20,18,16,.62)",
+          }}>
+            <img
+              ref={heroImgRef}
+              src="/homepage/pic3.jpg"
+              alt="Cornell campus"
+              style={{ width: "100%", height: 560, objectFit: "cover", display: "block", willChange: "transform" }}
+            />
+            <div style={{
+              position: "absolute",
+              left: 18,
+              bottom: 18,
+              background: "#1B1A18",
+              color: "#fff",
+              ...mono,
+              fontSize: 11,
+              letterSpacing: ".08em",
+              padding: "8px 13px",
+              borderRadius: 5,
+            }}>
+              LIBE SLOPE
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── HOW IT WORKS ── */}
+      <div id="how" style={{ maxWidth: 1240, margin: "0 auto", padding: "120px 32px 40px" }}>
+        <div data-reveal style={{ ...mono, fontSize: 12, letterSpacing: ".2em", color: "#908d86", marginBottom: 14 }}>
+          HOW IT WORKS
+        </div>
+        <h2 data-reveal style={{
+          ...serif,
+          fontSize: "clamp(32px,4vw,46px)",
+          fontWeight: 500,
+          letterSpacing: "-.02em",
+          color: "#1B1A18",
+          margin: "0 0 56px",
+          maxWidth: 620,
+          lineHeight: 1.08,
+        }}>
+          Three steps.{" "}
+          <span style={{ fontStyle: "italic", color: "#B31B1B" }}>Five rounds.</span>{" "}
+          One very specific corner of upstate New York.
+        </h2>
+
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0 }}>
+          {steps.map((s, i) => (
+            <div
+              key={i}
+              data-reveal
+              style={{
+                padding: i === 0 ? "4px 38px 4px 0" : i === 2 ? "4px 0 4px 38px" : "4px 38px",
+                borderRight: i < 2 ? "1px solid rgba(27,26,24,.1)" : "none",
+                transitionDelay: `${i * 0.1}s`,
+              }}
+            >
+              <div style={{ ...serif, fontSize: 46, fontWeight: 500, color: "#B31B1B", lineHeight: 1 }}>{s.num}</div>
+              <h3 style={{ ...sans, fontSize: 19, fontWeight: 600, color: "#1B1A18", margin: "20px 0 9px" }}>{s.title}</h3>
+              <p style={{ ...sans, fontSize: 15, lineHeight: 1.6, color: "#5c5953", margin: 0 }}>{s.desc}</p>
             </div>
           ))}
         </div>
+      </div>
 
-        <div style={{
-          background:"rgba(229,57,53,.08)",
-          border:"1px solid rgba(229,57,53,.2)",
-          borderLeft:"4px solid #E53935",
-          borderRadius:12,
-          padding:"22px 24px",
-          marginBottom:36,
-        }}>
-          <p style={{ fontSize:"1rem", color:"rgba(255,255,255,.6)", lineHeight:1.8, margin:0 }}>
-            Each game has <strong style={{ color:"white" }}>5 rounds</strong>. The closer your guess is to the actual location,
-            the more points you earn. Your goal is to get the highest score possible by the end.{" "}
-            <strong style={{ color:"#E53935" }}>Good luck!</strong>
-          </p>
+      {/* ── FEATURED LOCATIONS ── */}
+      <div style={{ maxWidth: 1240, margin: "0 auto", padding: "110px 32px 40px" }}>
+        <div data-reveal style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 36 }}>
+          <div>
+            <div style={{ ...mono, fontSize: 12, letterSpacing: ".2em", color: "#908d86", marginBottom: 14 }}>
+              ON THE BOARD
+            </div>
+            <h2 style={{ ...serif, fontSize: "clamp(28px,3.5vw,42px)", fontWeight: 500, letterSpacing: "-.02em", color: "#1B1A18", margin: 0 }}>
+              A few places you might land.
+            </h2>
+          </div>
+          <span style={{ ...sans, fontSize: 14, color: "#908d86" }}>20 locations and counting</span>
         </div>
 
-        <div style={{ textAlign:"center" }}>
-          <a href="/game" style={{ textDecoration:"none" }}>
-            <button className="cg-btn" style={{
-              background:"linear-gradient(135deg,#8B0000,#E53935)",
-              color:"white", border:"none",
-              padding:"14px 52px", borderRadius:14,
-              fontSize:"1rem", fontWeight:700, cursor:"pointer",
-              letterSpacing:".07em", textTransform:"uppercase",
-              boxShadow:"0 8px 28px rgba(229,57,53,.38)",
-            }}>
-              Play Now →
-            </button>
-          </a>
+        <div data-reveal style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)", gap: 16 }}>
+          {galleryItems.map((g, i) => (
+            <div
+              key={i}
+              className="gcard"
+              style={{
+                borderRadius: 11,
+                overflow: "hidden",
+                background: "#fff",
+                boxShadow: "0 14px 32px -18px rgba(20,18,16,.45)",
+                border: "1px solid rgba(27,26,24,.07)",
+                cursor: "pointer",
+              }}
+            >
+              <div style={{ overflow: "hidden", height: 150 }}>
+                <img
+                  src={g.img}
+                  alt={g.name}
+                  style={{ width: "100%", height: 150, objectFit: "cover", display: "block", transition: "transform .6s cubic-bezier(.2,.7,.3,1)" }}
+                />
+              </div>
+              <div style={{ padding: "13px 14px", ...mono, fontSize: 11, letterSpacing: ".04em", color: "#5c5953" }}>
+                {g.name}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-    </div>
-  </div>
-);
+      {/* ── EDITORIAL QUOTE ── */}
+      <div style={{ maxWidth: 1000, margin: "0 auto", padding: "130px 32px 120px", textAlign: "center" }}>
+        <p data-reveal style={{
+          ...serif,
+          fontSize: "clamp(24px,3.5vw,40px)",
+          fontWeight: 400,
+          fontStyle: "italic",
+          lineHeight: 1.32,
+          letterSpacing: "-.01em",
+          color: "#1B1A18",
+          margin: 0,
+        }}>
+          "You walk past these buildings a thousand times.{" "}
+          <span style={{ fontStyle: "normal", color: "#B31B1B" }}>Now find out if you were ever really looking.</span>"
+        </p>
+      </div>
 
-export default HomePage;
+      {/* ── CTA BANNER ── */}
+      <div data-reveal style={{ maxWidth: 1240, margin: "0 auto 96px", padding: "0 32px" }}>
+        <div style={{
+          background: "#1B1A18",
+          borderRadius: 18,
+          padding: "72px 64px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          overflow: "hidden",
+          position: "relative",
+          gap: 32,
+        }}>
+          <div style={{ position: "relative", zIndex: 2 }}>
+            <h2 style={{ ...serif, fontSize: "clamp(28px,3.8vw,44px)", fontWeight: 500, color: "#F6F4EF", margin: 0, letterSpacing: "-.015em" }}>
+              Ready to find your way?
+            </h2>
+            <p style={{ ...sans, fontSize: 16, color: "#9b978f", margin: "14px 0 0" }}>
+              No account needed. Jump in as a guest and start guessing.
+            </p>
+          </div>
+          <Link to="/play" style={{ flexShrink: 0 }}>
+            <button className="cg-btn lift" style={{
+              position: "relative",
+              zIndex: 2,
+              ...sans,
+              fontSize: 15,
+              fontWeight: 600,
+              color: "#fff",
+              background: "#B31B1B",
+              border: "none",
+              padding: "17px 40px",
+              borderRadius: 9,
+              cursor: "pointer",
+              boxShadow: "0 14px 30px -8px rgba(179,27,27,.55)",
+              whiteSpace: "nowrap",
+            }}>
+              Start playing →
+            </button>
+          </Link>
+          <img
+            src="/homepage/pic1.jpg"
+            alt=""
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              height: "100%",
+              width: "42%",
+              objectFit: "cover",
+              opacity: .16,
+              zIndex: 1,
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ── FOOTER ── */}
+      <div style={{ borderTop: "1px solid rgba(27,26,24,.1)" }}>
+        <div style={{
+          maxWidth: 1240,
+          margin: "0 auto",
+          padding: "34px 32px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src="/big_red.png" alt="" style={{ width: 22, height: 22, objectFit: "contain" }} />
+            <span style={{ ...serif, fontSize: 16, fontWeight: 600, color: "#1B1A18" }}>CornellGuessr</span>
+          </div>
+          <span style={{ ...mono, fontSize: 11, letterSpacing: ".06em", color: "#a8a49c" }}>
+            A STUDENT-MADE GAME · ITHACA, NY
+          </span>
+        </div>
+      </div>
+
+      {/* Responsive overrides */}
+      <style>{`
+        @media (max-width: 900px) {
+          .hero-grid { grid-template-columns: 1fr !important; }
+          .hero-img-wrap { display: none !important; }
+          .steps-grid { grid-template-columns: 1fr !important; }
+          .steps-grid > div { border-right: none !important; border-bottom: 1px solid rgba(27,26,24,.1); padding: 24px 0 !important; }
+          .gallery-grid { grid-template-columns: repeat(2,1fr) !important; }
+          .cta-inner { flex-direction: column !important; padding: 48px 32px !important; }
+        }
+      `}</style>
+    </div>
+  );
+}

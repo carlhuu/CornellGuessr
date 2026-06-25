@@ -1,309 +1,231 @@
-import {
-  createStyles,
-  Header,
-  Container,
-  Group,
-  Burger,
-  rem,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { signIn, signOut } from "../auth/auth";
 import { useAuth } from "../auth/AuthUserProvider";
-
-const useStyles = createStyles((theme) => ({
-  header: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    height: "100%",
-    maxWidth: "1400px",
-    padding: "0 2rem",
-  },
-
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    textDecoration: "none",
-    transition: "transform 0.2s ease",
-    "&:hover": {
-      transform: "scale(1.05)",
-    },
-  },
-
-  brandName: {
-    color: "white",
-    fontSize: "1.5rem",
-    fontWeight: 700,
-    letterSpacing: "-0.5px",
-  },
-
-  links: {
-    display: "flex",
-    gap: "0.5rem",
-    [theme.fn.smallerThan("sm")]: {
-      display: "none",
-    },
-  },
-
-  burger: {
-    [theme.fn.largerThan("sm")]: {
-      display: "none",
-    },
-  },
-
-  link: {
-    display: "block",
-    lineHeight: 1,
-    padding: `${rem(10)} ${rem(16)}`,
-    borderRadius: theme.radius.md,
-    textDecoration: "none",
-    color: "rgba(255, 255, 255, 0.85)",
-    fontSize: theme.fontSizes.md,
-    fontWeight: 500,
-    transition: "all 0.2s ease",
-    backgroundColor: "transparent",
-
-    "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
-      color: "white",
-    },
-  },
-
-  linkActive: {
-    "&, &:hover": {
-      backgroundColor: "rgba(229,57,53,.18)",
-      color: "white",
-      fontWeight: 600,
-      backdropFilter: "blur(10px)",
-    },
-  },
-
-  userSection: {
-    display: "flex",
-    alignItems: "center",
-    gap: "1rem",
-    paddingLeft: "1rem",
-    borderLeft: "1px solid rgba(255, 255, 255, 0.3)",
-    [theme.fn.smallerThan("sm")]: {
-      display: "none",
-    },
-  },
-
-  userName: {
-    color: "white",
-    fontSize: "0.95rem",
-    fontWeight: 500,
-    margin: 0,
-  },
-
-  loginButton: {
-    background: "linear-gradient(135deg, #8B0000, #E53935)",
-    color: "white",
-    border: "none",
-    padding: "0.6rem 1.5rem",
-    borderRadius: theme.radius.md,
-    fontSize: "0.95rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    transition: "all 0.2s ease",
-    boxShadow: "0 4px 16px rgba(229,57,53,.38)",
-
-    "&:hover": {
-      transform: "translateY(-2px)",
-      boxShadow: "0 6px 20px rgba(229,57,53,.5)",
-    },
-  },
-
-  mobileMenu: {
-    position: "absolute",
-    top: "70px",
-    left: 0,
-    right: 0,
-    background: "rgba(9,9,18,0.97)",
-    backdropFilter: "blur(24px)",
-    WebkitBackdropFilter: "blur(24px)",
-    borderBottom: "1px solid rgba(255,255,255,.08)",
-    boxShadow: "0 8px 32px rgba(0,0,0,.5)",
-    padding: "1rem",
-    animation: "slideDown 0.3s ease",
-  },
-
-  mobileLink: {
-    display: "block",
-    color: "rgba(255, 255, 255, 0.85)",
-    textDecoration: "none",
-    padding: "1rem",
-    borderRadius: theme.radius.md,
-    fontSize: theme.fontSizes.md,
-    fontWeight: 500,
-    backgroundColor: "transparent",
-    marginBottom: "0.5rem",
-    transition: "all 0.2s ease",
-
-    "&:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.15)",
-    },
-  },
-
-  mobileLinkActive: {
-    color: "white",
-    fontWeight: 600,
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
-  },
-
-  mobileUserSection: {
-    borderTop: "1px solid rgba(255, 255, 255, 0.3)",
-    paddingTop: "1rem",
-    marginTop: "0.5rem",
-  },
-
-  mobileUserName: {
-    color: "white",
-    margin: "0 0 1rem 1rem",
-    fontSize: "0.95rem",
-  },
-
-  mobileLoginButton: {
-    width: "100%",
-    background: "linear-gradient(135deg, #8B0000, #E53935)",
-    color: "white",
-    border: "none",
-    padding: "0.75rem",
-    borderRadius: theme.radius.md,
-    fontSize: "1rem",
-    fontWeight: 600,
-    cursor: "pointer",
-    boxShadow: "0 4px 16px rgba(229,57,53,.3)",
-  },
-}));
 
 interface HeaderSimpleProps {
   links: { link: string; label: string }[];
 }
 
 export function HeaderSimple({ links }: HeaderSimpleProps) {
-  const [opened, { toggle, close }] = useDisclosure(false);
-  const { classes, cx } = useStyles();
+  const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const activePath = location.pathname;
-
   const { user } = useAuth();
 
-  const handleLoginClick = async () => {
-    if (user) {
-      await signOut();
-    } else {
-      await signIn();
-    }
+  const initials = user?.displayName
+    ? user.displayName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()
+    : "";
+  const firstName = user?.displayName?.split(" ")[0] ?? "";
+
+  const handleAuth = async () => {
+    if (user) await signOut();
+    else await signIn();
+    setMobileOpen(false);
   };
 
-  const items = links.map((link) => (
-    <Link
-      key={link.label}
-      to={link.link}
-      className={cx(classes.link, {
-        [classes.linkActive]: activePath === link.link,
-      })}
-      onClick={close}
-    >
-      {link.label}
-    </Link>
-  ));
-
   return (
-    <Header
-      height={70}
-      sx={{
-        background: "rgba(9,9,18,0.88)",
-        backdropFilter: "blur(24px)",
-        WebkitBackdropFilter: "blur(24px)",
-        borderBottom: "1px solid rgba(255,255,255,.08)",
-        boxShadow: "0 4px 24px rgba(0,0,0,.4)",
-        border: "none",
+    <>
+      <header style={{
         position: "sticky",
         top: 0,
-        zIndex: 100,
-      }}
-    >
-      <Container className={classes.header} size="xl">
-        <Link to="/" className={classes.logo}>
-          <img
-            src="big_red.png"
-            alt="Logo"
-            style={{ 
-              height: "40px", 
-              width: "40px",
-              filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.2))",
-            }}
-          />
-          <span className={classes.brandName}>CornellGuessr</span>
-        </Link>
+        zIndex: 50,
+        background: "rgba(246,244,239,.92)",
+        backdropFilter: "saturate(140%) blur(8px)",
+        WebkitBackdropFilter: "saturate(140%) blur(8px)",
+        borderBottom: "1px solid rgba(27,26,24,.09)",
+      }}>
+        <div style={{
+          maxWidth: 1240,
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "14px 32px",
+        }}>
+          {/* Logo */}
+          <Link to="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
+            <img src="/big_red.png" alt="" style={{ width: 28, height: 28, objectFit: "contain" }} />
+            <span style={{
+              fontFamily: "'Newsreader', serif",
+              fontSize: 20,
+              fontWeight: 600,
+              color: "#1B1A18",
+              letterSpacing: "-.01em",
+            }}>
+              Cornell<span style={{ color: "#B31B1B" }}>Guessr</span>
+            </span>
+          </Link>
 
-        <Group spacing="xl" style={{ flex: 1, justifyContent: "flex-end" }}>
-          <Group spacing={5} className={classes.links}>
-            {items}
-          </Group>
+          {/* Desktop nav */}
+          <div style={{ display: "flex", alignItems: "center", gap: 28 }} className="cg-desktop-nav">
+            {links.filter(l => l.link !== "/").map(l => (
+              <Link
+                key={l.link}
+                to={l.link}
+                style={{
+                  fontFamily: "'Geist', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 500,
+                  color: activePath === l.link ? "#1B1A18" : "#6B6862",
+                  textDecoration: "none",
+                  transition: "color .15s",
+                }}
+              >
+                {l.label}
+              </Link>
+            ))}
 
-          <div className={classes.userSection}>
-            {user && <p className={classes.userName}>Hello, {user.displayName}</p>}
-            <button onClick={handleLoginClick} className={classes.loginButton}>
-              {user ? "Sign out" : "Log in"}
-            </button>
-          </div>
-
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            className={classes.burger}
-            size="sm"
-            color="white"
-          />
-        </Group>
-      </Container>
-
-      {/* Mobile menu */}
-      {opened && (
-        <div className={classes.mobileMenu}>
-          {links.map((link) => (
-            <Link
-              key={link.label}
-              to={link.link}
-              className={cx(classes.mobileLink, {
-                [classes.mobileLinkActive]: activePath === link.link,
-              })}
-              onClick={close}
-            >
-              {link.label}
-            </Link>
-          ))}
-          
-          <div className={classes.mobileUserSection}>
-            {user && (
-              <p className={classes.mobileUserName}>
-                Hello, {user.displayName}
-              </p>
+            {user ? (
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                paddingLeft: 24,
+                borderLeft: "1px solid rgba(27,26,24,.12)",
+              }}>
+                <div style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  background: "#2F3E52",
+                  color: "#fff",
+                  fontFamily: "'Geist', sans-serif",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}>
+                  {initials}
+                </div>
+                <span style={{ fontFamily: "'Geist', sans-serif", fontSize: 14, color: "#1B1A18" }}>
+                  {firstName}
+                </span>
+                <button
+                  onClick={handleAuth}
+                  style={{
+                    fontFamily: "'Geist', sans-serif",
+                    fontSize: 13,
+                    fontWeight: 600,
+                    color: "#6B6862",
+                    background: "transparent",
+                    border: "1px solid rgba(27,26,24,.2)",
+                    padding: "6px 14px",
+                    borderRadius: 7,
+                    cursor: "pointer",
+                    marginLeft: 4,
+                  }}
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleAuth}
+                className="cg-btn"
+                style={{
+                  fontFamily: "'Geist', sans-serif",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: "#fff",
+                  background: "#B31B1B",
+                  border: "none",
+                  padding: "9px 20px",
+                  borderRadius: 7,
+                  cursor: "pointer",
+                  boxShadow: "0 8px 18px -8px rgba(179,27,27,.5)",
+                }}
+              >
+                Log in
+              </button>
             )}
-            <button onClick={handleLoginClick} className={classes.mobileLoginButton}>
+          </div>
+
+          {/* Mobile burger */}
+          <button
+            onClick={() => setMobileOpen(o => !o)}
+            className="cg-mobile-burger"
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              padding: 4,
+              display: "none",
+              flexDirection: "column",
+              gap: 5,
+            }}
+            aria-label="Menu"
+          >
+            {[0, 1, 2].map(i => (
+              <span key={i} style={{
+                display: "block",
+                width: 22,
+                height: 2,
+                background: "#1B1A18",
+                borderRadius: 2,
+                transition: "all .2s",
+              }} />
+            ))}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div style={{
+            background: "rgba(246,244,239,.98)",
+            backdropFilter: "blur(12px)",
+            borderTop: "1px solid rgba(27,26,24,.08)",
+            padding: "12px 24px 20px",
+          }}>
+            {links.filter(l => l.link !== "/").map(l => (
+              <Link
+                key={l.link}
+                to={l.link}
+                onClick={() => setMobileOpen(false)}
+                style={{
+                  display: "block",
+                  fontFamily: "'Geist', sans-serif",
+                  fontSize: 15,
+                  fontWeight: 500,
+                  color: activePath === l.link ? "#B31B1B" : "#1B1A18",
+                  textDecoration: "none",
+                  padding: "12px 0",
+                  borderBottom: "1px solid rgba(27,26,24,.07)",
+                }}
+              >
+                {l.label}
+              </Link>
+            ))}
+            <button
+              onClick={handleAuth}
+              style={{
+                marginTop: 16,
+                width: "100%",
+                fontFamily: "'Geist', sans-serif",
+                fontSize: 15,
+                fontWeight: 600,
+                color: "#fff",
+                background: "#B31B1B",
+                border: "none",
+                padding: "13px 0",
+                borderRadius: 8,
+                cursor: "pointer",
+              }}
+            >
               {user ? "Sign out" : "Log in"}
             </button>
           </div>
-        </div>
-      )}
+        )}
+      </header>
 
       <style>{`
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        @media (max-width: 640px) {
+          .cg-desktop-nav { display: none !important; }
+          .cg-mobile-burger { display: flex !important; }
         }
       `}</style>
-    </Header>
+    </>
   );
 }

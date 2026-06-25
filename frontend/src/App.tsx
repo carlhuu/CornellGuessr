@@ -23,7 +23,7 @@ const router = createBrowserRouter([
 export default function App() {
     return (
         <AuthUserProvider>
-            <MantineProvider withGlobalStyles withNormalizeCSS>
+            <MantineProvider withGlobalStyles={false} withNormalizeCSS={false}>
                 <RouterProvider router={router} />
             </MantineProvider>
         </AuthUserProvider>

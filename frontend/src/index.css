@@ -1,5 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
 html {
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 *,
 *:before,
@@ -41,11 +44,10 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-        "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
-        "Helvetica Neue", sans-serif;
+    font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 code {
@@ -58,8 +60,8 @@ body {
     height: 100%;
     margin: 0;
     line-height: 1.5;
-    color: white;
-    background: #090912;
+    color: #1B1A18;
+    background: #F6F4EF;
 }
 textarea,
 input,
@@ -132,6 +134,7 @@ form[action$="destroy"] button {
 
 #root {
     display: flex;
+    flex-direction: column;
     height: 100%;
     width: 100%;
 }
@@ -484,8 +487,8 @@ i {
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes cg-pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(229,57,53,.7), 0 0 10px rgba(229,57,53,.4); }
-  50%       { box-shadow: 0 0 0 6px rgba(229,57,53,0), 0 0 22px rgba(229,57,53,.9); }
+  0%, 100% { box-shadow: 0 0 0 0 rgba(179,27,27,.6), 0 0 10px rgba(179,27,27,.3); }
+  50%       { box-shadow: 0 0 0 6px rgba(179,27,27,0), 0 0 22px rgba(179,27,27,.7); }
 }
 @keyframes cg-spin {
   to { transform: rotate(360deg); }
@@ -495,18 +498,14 @@ i {
   to   { opacity: 1; transform: translateY(0); }
 }
 @keyframes cg-glow-pulse {
-  0%, 100% { opacity: .6; }
+  0%, 100% { opacity: .5; }
   50%       { opacity: 1; }
 }
-
-.cg-title {
-  background: linear-gradient(90deg, #ff7070, #E53935, #ffaaaa, #E53935, #ff7070);
-  background-size: 300% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: cg-shimmer 4s linear infinite;
+@keyframes cg-reveal {
+  from { opacity: 0; transform: translateY(34px); }
+  to   { opacity: 1; transform: none; }
 }
+
 .cg-page-enter   { animation: cg-fade-up .5s ease forwards; }
 .cg-result-enter { animation: cg-slide-up .6s cubic-bezier(.34,1.56,.64,1) forwards; }
 .cg-stat { opacity: 0; }
@@ -516,23 +515,32 @@ i {
 .cg-dot-active { animation: cg-pulse-dot 2s ease-in-out infinite; }
 .cg-spinner {
   width: 44px; height: 44px;
-  border: 3px solid rgba(255,255,255,.08);
-  border-top-color: #E53935;
+  border: 3px solid rgba(27,26,24,.08);
+  border-top-color: #B31B1B;
   border-radius: 50%;
   animation: cg-spin .75s linear infinite;
 }
 .cg-btn {
-  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  transition: transform .25s cubic-bezier(.2,.7,.3,1), box-shadow .25s;
   position: relative;
   overflow: hidden;
 }
-.cg-btn::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,.14) 0%, transparent 55%);
-  pointer-events: none;
-}
-.cg-btn:hover:not(:disabled)  { transform: translateY(-3px) scale(1.03); }
-.cg-btn:active:not(:disabled) { transform: translateY(1px)  scale(.98); }
+.cg-btn:hover:not(:disabled)  { transform: translateY(-2px); }
+.cg-btn:active:not(:disabled) { transform: translateY(1px); }
 .cg-card-3d { transition: transform .15s ease, box-shadow .15s ease; }
 .cg-guess-indicator { animation: cg-glow-pulse 1.8s ease-in-out infinite; }
+
+/* Game page keeps dark bg */
+.cg-game-page {
+  min-height: calc(100vh - 64px);
+  width: 100%;
+  background: #090912;
+  color: white;
+}
+.cg-glass {
+  background: rgba(255,255,255,.055);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1);
+}
