@@ -1,255 +1,164 @@
 import ImageGallery from "react-image-gallery";
 import "react-image-gallery/styles/css/image-gallery.css";
-//import Spiral from "../components/spiral";
 import p1 from "/homepage/pic1.jpg";
-import p2 from "/homepage/pic2.jpg";
 import p3 from "/homepage/pic3.jpg";
 import p4 from "/homepage/pic4.jpg";
 
 const images = [
   { original: p1 },
-  { original: p2 },
   { original: p3 },
   { original: p4 },
 ];
 
+const glass = {
+  background: "rgba(255,255,255,.055)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255,255,255,.1)",
+  boxShadow: "0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1)",
+} as React.CSSProperties;
+
+const pageBg: React.CSSProperties = {
+  minHeight: "100vh",
+  width: "100vw",
+  background: `
+    radial-gradient(circle at 18% 28%, rgba(179,27,27,.18) 0%, transparent 48%),
+    radial-gradient(circle at 82% 72%, rgba(63,81,181,.1)   0%, transparent 45%),
+    #090912
+  `,
+};
+
+const steps = [
+  { num: "1", title: "View Location",    desc: "See a photo of a spot on Cornell's campus." },
+  { num: "2", title: "Make Your Guess",  desc: "Click the map to pin where you think it is." },
+  { num: "3", title: "Score Points",     desc: "Closer guesses earn more points — aim for 1000!" },
+];
+
 const arrowStyle: React.CSSProperties = {
-  background: "rgba(255, 255, 255, 0.3)", 
+  background: "rgba(255,255,255,.12)",
+  backdropFilter: "blur(10px)",
+  border: "1px solid rgba(255,255,255,.15)",
   borderRadius: "50%",
-  width: "30px",            
-  height: "30px",
-  display: "flex",            
+  width: 38,
+  height: 38,
+  display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  fontSize: "20px",        
-  color: "white",             
+  fontSize: "1.3rem",
+  color: "white",
   cursor: "pointer",
   position: "absolute",
   top: "50%",
   transform: "translateY(-50%)",
   zIndex: 10,
-  border: "none",             
 };
 
 const renderLeftNav = (onClick: React.MouseEventHandler<HTMLButtonElement>) => (
-  <button
-    type="button"
-    style={{ ...arrowStyle, left: "10px" }}
-    onClick={onClick}
-    className="image-gallery-custom-left-nav"
-  >
-    ‹
-  </button>
+  <button type="button" style={{ ...arrowStyle, left: 12 }} onClick={onClick}>‹</button>
 );
-
 const renderRightNav = (onClick: React.MouseEventHandler<HTMLButtonElement>) => (
-  <button
-    type="button"
-    style={{ ...arrowStyle, right: "10px" }}
-    onClick={onClick}
-    className="image-gallery-custom-right-nav"
-  >
-    ›
-  </button>
+  <button type="button" style={{ ...arrowStyle, right: 12 }} onClick={onClick}>›</button>
 );
 
 const HomePage = () => (
-  <div style={{
-    minHeight: "100vh",
-    width: "100vw",
-    background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-    padding: "40px 20px",
-  }}>
-    <div style={{ width: "100%", margin: "0 auto" }}>
-      {/* Hero Section */}
-      <div style={{
-        textAlign: "center",
-        marginBottom: "60px",
-        animation: "fadeIn 1s ease-in",
-      }}>
-        <h1 style={{
-          fontSize: "4rem",
-          fontWeight: "800",
-          background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          marginBottom: "20px",
-          textShadow: "2px 2px 4px rgba(0,0,0,0.1)",
-        }}>
+  <div style={{ ...pageBg, padding: "56px 20px 80px" }}>
+    {/* decorative orbs */}
+    <div style={{ position:"fixed", width:700, height:700, borderRadius:"50%", background:"radial-gradient(circle, rgba(179,27,27,.1) 0%, transparent 68%)", top:"30%", left:"10%", transform:"translate(-50%,-50%)", pointerEvents:"none", zIndex:0 }} />
+    <div style={{ position:"fixed", width:500, height:500, borderRadius:"50%", background:"radial-gradient(circle, rgba(63,81,181,.07) 0%, transparent 68%)", top:"60%", left:"80%", transform:"translate(-50%,-50%)", pointerEvents:"none", zIndex:0 }} />
+
+    <div style={{ maxWidth: 960, margin: "0 auto", position:"relative", zIndex:1 }} className="cg-page-enter">
+
+      {/* Hero */}
+      <div style={{ textAlign: "center", marginBottom: 56 }}>
+        <div style={{
+          width: 72, height: 72, borderRadius: 20, margin: "0 auto 28px",
+          background: "linear-gradient(135deg,#8B0000,#E53935)",
+          boxShadow: "0 10px 36px rgba(229,57,53,.55)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "2rem",
+        }}>🐻</div>
+        <h1 className="cg-title" style={{ fontSize: "3.8rem", fontWeight: 800, marginBottom: 16, letterSpacing: "-.02em", lineHeight: 1.1 }}>
           Welcome to CornellGuessr!
         </h1>
-        <p style={{
-          fontSize: "1.25rem",
-          color: "#555",
-          maxWidth: "600px",
-          margin: "0 auto",
-          lineHeight: "1.6",
-        }}>
+        <p style={{ fontSize: "1.15rem", color: "rgba(255,255,255,.45)", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
           Test your knowledge of Cornell's beautiful campus
         </p>
       </div>
 
-      {/* Image Gallery Section */}
-      <div style={{
-        maxWidth: "900px",
-        margin: "0 auto 80px",
-        borderRadius: "20px",
-        overflow: "hidden",
-        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.3)",
-        border: "4px solid white",
-      }}>
+      {/* Gallery */}
+      <div style={{ ...glass, borderRadius: 20, overflow: "hidden", marginBottom: 48, padding: 0, boxShadow: "0 20px 60px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08)" }}>
         <ImageGallery
-        items={images}
-        showFullscreenButton={false}
-        showPlayButton={false}
-        showNav={true} 
-        showThumbnails={false}
-        autoPlay={true}
-        renderLeftNav={renderLeftNav}
-        renderRightNav={renderRightNav}
-      />
+          items={images}
+          showFullscreenButton={false}
+          showPlayButton={false}
+          showNav={true}
+          showThumbnails={false}
+          autoPlay={true}
+          renderLeftNav={renderLeftNav}
+          renderRightNav={renderRightNav}
+        />
       </div>
 
-      {/* How to Play Section */}
-      <div style={{
-        background: "white",
-        borderRadius: "20px",
-        padding: "60px 40px",
-        boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
-        maxWidth: "900px",
-        margin: "0 auto 60px",
-      }}>
-        <h2 style={{
-          fontSize: "2.5rem",
-          fontWeight: "700",
-          color: "#B31B1B",
-          textAlign: "center",
-          marginBottom: "30px",
-        }}>
-          How to Play
-        </h2>
-        
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "30px",
-          marginBottom: "40px",
-        }}>
-          {/* Step 1 */}
-          <div style={{
-            textAlign: "center",
-            padding: "20px",
-          }}>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: "0 auto 20px",
-              boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
-            }}>
-              1
-            </div>
-            <h3 style={{ color: "#333", marginBottom: "10px", fontSize: "1.25rem" }}>View Location</h3>
-            <p style={{ color: "#666", lineHeight: "1.6" }}>
-              See a photo of a spot on Cornell's campus
-            </p>
-          </div>
+      {/* How to Play */}
+      <div style={{ ...glass, borderRadius: 20, padding: "48px 40px" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:36, justifyContent:"center" }}>
+          <div style={{ width:8, height:8, borderRadius:"50%", background:"#E53935", boxShadow:"0 0 8px rgba(229,57,53,.9)" }} />
+          <h2 style={{ fontSize:"1.9rem", fontWeight:700, color:"white", margin:0, letterSpacing:"-.01em" }}>
+            How to Play
+          </h2>
+        </div>
 
-          {/* Step 2 */}
-          <div style={{
-            textAlign: "center",
-            padding: "20px",
-          }}>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: "0 auto 20px",
-              boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
-            }}>
-              2
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))", gap:20, marginBottom:36 }}>
+          {steps.map((s, i) => (
+            <div key={i} className="cg-stat" style={{ ...glass, borderRadius:16, padding:"28px 20px", textAlign:"center" }}>
+              <div style={{
+                width:60, height:60, borderRadius:"50%",
+                background:"linear-gradient(135deg,#8B0000,#E53935)",
+                boxShadow:"0 6px 20px rgba(229,57,53,.45)",
+                color:"white", fontSize:"1.5rem", fontWeight:800,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                margin:"0 auto 18px",
+              }}>
+                {s.num}
+              </div>
+              <h3 style={{ color:"white", fontSize:"1.05rem", fontWeight:700, marginBottom:8 }}>{s.title}</h3>
+              <p style={{ color:"rgba(255,255,255,.45)", fontSize:".9rem", lineHeight:1.6, margin:0 }}>{s.desc}</p>
             </div>
-            <h3 style={{ color: "#333", marginBottom: "10px", fontSize: "1.25rem" }}>Make Your Guess</h3>
-            <p style={{ color: "#666", lineHeight: "1.6" }}>
-              Use the map to select where you think it is
-            </p>
-          </div>
-
-          {/* Step 3 */}
-          <div style={{
-            textAlign: "center",
-            padding: "20px",
-          }}>
-            <div style={{
-              width: "80px",
-              height: "80px",
-              borderRadius: "50%",
-              background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "2rem",
-              fontWeight: "bold",
-              margin: "0 auto 20px",
-              boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
-            }}>
-              3
-            </div>
-            <h3 style={{ color: "#333", marginBottom: "10px", fontSize: "1.25rem" }}>Score Points</h3>
-            <p style={{ color: "#666", lineHeight: "1.6" }}>
-              Get more points for closer guesses!
-            </p>
-          </div>
+          ))}
         </div>
 
         <div style={{
-          background: "#f8f9fa",
-          borderRadius: "12px",
-          padding: "30px",
-          borderLeft: "5px solid #B31B1B",
+          background:"rgba(229,57,53,.08)",
+          border:"1px solid rgba(229,57,53,.2)",
+          borderLeft:"4px solid #E53935",
+          borderRadius:12,
+          padding:"22px 24px",
+          marginBottom:36,
         }}>
-          <p style={{
-            fontSize: "1.1rem",
-            color: "#444",
-            lineHeight: "1.8",
-            margin: 0,
-          }}>
-            Each game has <strong>5 rounds</strong>. The closer your guess is to the actual location, 
-            the more points you earn. Your goal is to get the highest score possible by the end. 
-            Ready to test your Cornell knowledge? <strong>Good luck!</strong>
+          <p style={{ fontSize:"1rem", color:"rgba(255,255,255,.6)", lineHeight:1.8, margin:0 }}>
+            Each game has <strong style={{ color:"white" }}>5 rounds</strong>. The closer your guess is to the actual location,
+            the more points you earn. Your goal is to get the highest score possible by the end.{" "}
+            <strong style={{ color:"#E53935" }}>Good luck!</strong>
           </p>
         </div>
-      </div>
-    </div>
 
-    <style>{`
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-    `}</style>
+        <div style={{ textAlign:"center" }}>
+          <a href="/game" style={{ textDecoration:"none" }}>
+            <button className="cg-btn" style={{
+              background:"linear-gradient(135deg,#8B0000,#E53935)",
+              color:"white", border:"none",
+              padding:"14px 52px", borderRadius:14,
+              fontSize:"1rem", fontWeight:700, cursor:"pointer",
+              letterSpacing:".07em", textTransform:"uppercase",
+              boxShadow:"0 8px 28px rgba(229,57,53,.38)",
+            }}>
+              Play Now →
+            </button>
+          </a>
+        </div>
+      </div>
+
+    </div>
   </div>
 );
 

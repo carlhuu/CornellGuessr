@@ -73,7 +73,7 @@ const useStyles = createStyles((theme) => ({
 
   linkActive: {
     "&, &:hover": {
-      backgroundColor: "rgba(255, 255, 255, 0.2)",
+      backgroundColor: "rgba(229,57,53,.18)",
       color: "white",
       fontWeight: 600,
       backdropFilter: "blur(10px)",
@@ -99,8 +99,8 @@ const useStyles = createStyles((theme) => ({
   },
 
   loginButton: {
-    background: "white",
-    color: "#B31B1B",
+    background: "linear-gradient(135deg, #8B0000, #E53935)",
+    color: "white",
     border: "none",
     padding: "0.6rem 1.5rem",
     borderRadius: theme.radius.md,
@@ -108,11 +108,11 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 600,
     cursor: "pointer",
     transition: "all 0.2s ease",
-    boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)",
+    boxShadow: "0 4px 16px rgba(229,57,53,.38)",
 
     "&:hover": {
       transform: "translateY(-2px)",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.3)",
+      boxShadow: "0 6px 20px rgba(229,57,53,.5)",
     },
   },
 
@@ -121,8 +121,11 @@ const useStyles = createStyles((theme) => ({
     top: "70px",
     left: 0,
     right: 0,
-    background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+    background: "rgba(9,9,18,0.97)",
+    backdropFilter: "blur(24px)",
+    WebkitBackdropFilter: "blur(24px)",
+    borderBottom: "1px solid rgba(255,255,255,.08)",
+    boxShadow: "0 8px 32px rgba(0,0,0,.5)",
     padding: "1rem",
     animation: "slideDown 0.3s ease",
   },
@@ -164,14 +167,15 @@ const useStyles = createStyles((theme) => ({
 
   mobileLoginButton: {
     width: "100%",
-    background: "white",
-    color: "#B31B1B",
+    background: "linear-gradient(135deg, #8B0000, #E53935)",
+    color: "white",
     border: "none",
     padding: "0.75rem",
     borderRadius: theme.radius.md,
     fontSize: "1rem",
     fontWeight: 600,
     cursor: "pointer",
+    boxShadow: "0 4px 16px rgba(229,57,53,.3)",
   },
 }));
 
@@ -209,12 +213,18 @@ export function HeaderSimple({ links }: HeaderSimpleProps) {
   ));
 
   return (
-    <Header 
+    <Header
       height={70}
       sx={{
-        background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-        boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
+        background: "rgba(9,9,18,0.88)",
+        backdropFilter: "blur(24px)",
+        WebkitBackdropFilter: "blur(24px)",
+        borderBottom: "1px solid rgba(255,255,255,.08)",
+        boxShadow: "0 4px 24px rgba(0,0,0,.4)",
         border: "none",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
       }}
     >
       <Container className={classes.header} size="xl">

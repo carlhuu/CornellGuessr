@@ -1,11 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuth } from "../auth/AuthUserProvider";
 import { useEffect, useState } from "react";
 import { signIn } from "../auth/auth";
 
-
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
 
 type Stats = { high_score: number; total_games: number; total_pts: number };
 
@@ -14,6 +11,25 @@ const getStats = async (id: string): Promise<Stats | null> => {
   if (!res.ok) throw new Error("Failed to fetch stats");
   return res.json();
 };
+
+const glass = {
+  background: "rgba(255,255,255,.055)",
+  backdropFilter: "blur(24px)",
+  WebkitBackdropFilter: "blur(24px)",
+  border: "1px solid rgba(255,255,255,.1)",
+  boxShadow: "0 8px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.1)",
+} as React.CSSProperties;
+
+const pageBg: React.CSSProperties = {
+  minHeight: "calc(100vh - 70px)",
+  width: "100vw",
+  background: `
+    radial-gradient(circle at 18% 28%, rgba(179,27,27,.18) 0%, transparent 48%),
+    radial-gradient(circle at 82% 72%, rgba(63,81,181,.1)   0%, transparent 45%),
+    #090912
+  `,
+};
+
 export default function Profile() {
   const { user } = useAuth();
   const [stats, setStats] = useState<Stats | null>(null);
@@ -41,87 +57,37 @@ export default function Profile() {
     fetchStats();
 
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        fetchStats();
-      }
+      if (document.visibilityState === "visible") fetchStats();
     };
-
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [user]);
 
-  // Not logged in state
+  // ── Not logged in ────────────────────────────────────────────────────────
   if (!user) {
     return (
-      <div style={{
-        minHeight: "calc(100vh - 70px)",
-        background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-        display: "flex",
-        width: "100vw",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "40px 20px",
-      }}>
-        <div style={{
-          background: "white",
-          borderRadius: "20px",
-          padding: "60px 40px",
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
-          maxWidth: "500px",
-          textAlign: "center",
-        }}>
+      <div style={{ ...pageBg, display:"flex", alignItems:"center", justifyContent:"center", padding:"40px 20px" }}>
+        <div className="cg-page-enter" style={{ ...glass, borderRadius:28, padding:"64px 48px", maxWidth:480, width:"100%", textAlign:"center" }}>
           <div style={{
-            width: "100px",
-            height: "100px",
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 30px",
-            fontSize: "3rem",
-          }}>
-            👤
-          </div>
-          <h1 style={{
-            fontSize: "2.5rem",
-            fontWeight: "700",
-            color: "#B31B1B",
-            marginBottom: "20px",
-          }}>
-            Profile
-          </h1>
-          <p style={{
-            fontSize: "1.1rem",
-            color: "#666",
-            marginBottom: "40px",
-            lineHeight: "1.6",
-          }}>
+            width:72, height:72, borderRadius:20, margin:"0 auto 28px",
+            background:"linear-gradient(135deg,#8B0000,#E53935)",
+            boxShadow:"0 10px 36px rgba(229,57,53,.55)",
+            display:"flex", alignItems:"center", justifyContent:"center", fontSize:"2rem",
+          }}>👤</div>
+          <h1 style={{ fontSize:"2.2rem", fontWeight:800, color:"white", marginBottom:12, letterSpacing:"-.02em" }}>Profile</h1>
+          <p style={{ fontSize:"1rem", color:"rgba(255,255,255,.45)", lineHeight:1.7, marginBottom:36 }}>
             Log in to view your stats and track your progress!
           </p>
           <button
+            className="cg-btn"
             onClick={() => signIn()}
             style={{
-              background: "linear-gradient(135deg, #B31B1B 0%, #8B0000 100%)",
-              color: "white",
-              border: "none",
-              padding: "1rem 3rem",
-              borderRadius: "12px",
-              fontSize: "1.2rem",
-              fontWeight: "600",
-              cursor: "pointer",
-              boxShadow: "0 4px 15px rgba(179, 27, 27, 0.3)",
-              transition: "all 0.3s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-              e.currentTarget.style.boxShadow = "0 6px 20px rgba(179, 27, 27, 0.4)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 15px rgba(179, 27, 27, 0.3)";
+              background:"linear-gradient(135deg,#8B0000,#E53935)",
+              color:"white", border:"none",
+              padding:"16px 0", borderRadius:14, width:"100%",
+              fontSize:"1.05rem", fontWeight:700, cursor:"pointer",
+              letterSpacing:".06em", textTransform:"uppercase",
+              boxShadow:"0 10px 36px rgba(229,57,53,.45)",
             }}
           >
             Log In
@@ -131,253 +97,95 @@ export default function Profile() {
     );
   }
 
+  // ── Loading ──────────────────────────────────────────────────────────────
+  if (loading) {
+    return (
+      <div style={{ ...pageBg, display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", gap:16 }}>
+        <div className="cg-spinner" />
+        <span style={{ color:"rgba(255,255,255,.4)", fontSize:".85rem", letterSpacing:".12em" }}>LOADING STATS</span>
+      </div>
+    );
+  }
+
+  const statCards = stats ? [
+    {
+      icon: "🎮",
+      label: "Games Played",
+      value: stats.total_games,
+      style: glass,
+      valueColor: "white",
+      labelColor: "rgba(255,255,255,.4)",
+    },
+    {
+      icon: "👑",
+      label: "High Score",
+      value: stats.high_score,
+      style: { background:"rgba(229,57,53,.1)", border:"1px solid rgba(229,57,53,.22)", boxShadow:"0 4px 20px rgba(229,57,53,.15)", backdropFilter:"blur(24px)", WebkitBackdropFilter:"blur(24px)" } as React.CSSProperties,
+      valueColor: "#E53935",
+      labelColor: "rgba(229,57,53,.75)",
+    },
+    {
+      icon: "📊",
+      label: "Average Score",
+      value: calc(stats.total_pts, stats.total_games),
+      style: glass,
+      valueColor: "white",
+      labelColor: "rgba(255,255,255,.4)",
+    },
+  ] : [];
+
+  // ── Profile ──────────────────────────────────────────────────────────────
   return (
-    <div style={{
-      minHeight: "calc(100vh - 70px)",
-      width: "100vw",
-      background: "linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)",
-      padding: "40px 20px",
-    }}>
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-        {/* Profile Header */}
-        <div style={{
-          background: "white",
-          borderRadius: "20px",
-          padding: "40px",
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
-          marginBottom: "40px",
-          textAlign: "center",
-        }}>
-          {/* Name */}
-          <h1 style={{
-            fontSize: "2.5rem",
-            fontWeight: "700",
-            color: "#B31B1B",
-            marginBottom: "10px",
+    <div style={{ ...pageBg, padding:"32px 20px" }}>
+      <div style={{ maxWidth:1000, margin:"0 auto" }} className="cg-page-enter">
+
+        {/* Profile header */}
+        <div style={{ ...glass, borderRadius:20, padding:"40px", marginBottom:24, textAlign:"center" }}>
+          <div style={{
+            width:80, height:80, borderRadius:"50%",
+            background:"linear-gradient(135deg,#8B0000,#E53935)",
+            boxShadow:"0 8px 28px rgba(229,57,53,.5)",
+            display:"flex", alignItems:"center", justifyContent:"center",
+            margin:"0 auto 20px",
+            fontSize:"2rem", fontWeight:800, color:"white",
           }}>
+            {user.displayName?.[0]?.toUpperCase() ?? "?"}
+          </div>
+          <h1 style={{ fontSize:"2rem", fontWeight:800, color:"white", marginBottom:6, letterSpacing:"-.02em" }}>
             Hello, {user.displayName}!
           </h1>
-          
-          {/* Email */}
-          <p style={{
-            fontSize: "1.1rem",
-            color: "#666",
-            marginBottom: "0",
-          }}>
-            {user.email}
-          </p>
+          <p style={{ fontSize:".95rem", color:"rgba(255,255,255,.35)", margin:0 }}>{user.email}</p>
         </div>
 
-        {/* Stats Section */}
-        <div style={{
-          background: "white",
-          borderRadius: "20px",
-          padding: "40px",
-          boxShadow: "0 10px 40px rgba(0, 0, 0, 0.1)",
-        }}>
-          <h2 style={{
-            fontSize: "2rem",
-            fontWeight: "700",
-            color: "#B31B1B",
-            marginBottom: "30px",
-            textAlign: "center",
-          }}>
-            Your Statistics
-          </h2>
+        {/* Stats */}
+        <div style={{ ...glass, borderRadius:20, padding:"40px" }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:32, justifyContent:"center" }}>
+            <div style={{ width:8, height:8, borderRadius:"50%", background:"#E53935", boxShadow:"0 0 8px rgba(229,57,53,.9)" }} />
+            <h2 style={{ fontSize:"1.6rem", fontWeight:700, color:"white", margin:0, letterSpacing:"-.01em" }}>
+              Your Statistics
+            </h2>
+          </div>
 
-          {loading ? (
-            <div style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              color: "#666",
-              fontSize: "1.1rem",
-            }}>
-              <div style={{
-                width: "50px",
-                height: "50px",
-                border: "4px solid #f3f3f3",
-                borderTop: "4px solid #B31B1B",
-                borderRadius: "50%",
-                margin: "0 auto 20px",
-                animation: "spin 1s linear infinite",
-              }}></div>
-              Loading stats...
-            </div>
-          ) : stats ? (
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-              gap: "25px",
-            }}>
-              {/* Games Played */}
-              <div style={{
-                background: "linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)",
-                padding: "30px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #dee2e6",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow = "0 8px 20px rgba(0, 0, 0, 0.1)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-              >
-                <div style={{
-                  width: "70px",
-                  height: "70px",
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #17a2b8 0%, #138496 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 20px",
-                  fontSize: "2rem",
-                }}>
-                  🎮
+          {stats ? (
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))", gap:20 }}>
+              {statCards.map((c, i) => (
+                <div key={i} className="cg-stat" style={{ ...c.style, borderRadius:16, padding:"28px 20px", textAlign:"center" }}>
+                  <div style={{ fontSize:"2.4rem", marginBottom:14 }}>{c.icon}</div>
+                  <div style={{ fontSize:".72rem", color:c.labelColor, letterSpacing:".15em", textTransform:"uppercase", marginBottom:10, fontWeight:700 }}>
+                    {c.label}
+                  </div>
+                  <div style={{ fontSize:"3rem", fontWeight:800, color:c.valueColor, lineHeight:1 }}>{c.value}</div>
                 </div>
-                <div style={{
-                  fontSize: "1rem",
-                  color: "#666",
-                  fontWeight: "500",
-                  marginBottom: "10px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                }}>
-                  Games Played
-                </div>
-                <div style={{
-                  fontSize: "3rem",
-                  fontWeight: "700",
-                  color: "#333",
-                }}>
-                  {stats.total_games}
-                </div>
-              </div>
-
-              {/* High Score */}
-              <div style={{
-                background: "linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%)",
-                padding: "30px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #ffc107",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow = "0 8px 20px rgba(255, 193, 7, 0.3)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-              >
-                <div style={{
-                  width: "70px",
-                  height: "70px",
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #ffc107 0%, #ff9800 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 20px",
-                  fontSize: "2rem",
-                }}>
-                  👑
-                </div>
-                <div style={{
-                  fontSize: "1rem",
-                  color: "#856404",
-                  fontWeight: "500",
-                  marginBottom: "10px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                }}>
-                  High Score
-                </div>
-                <div style={{
-                  fontSize: "3rem",
-                  fontWeight: "700",
-                  color: "#856404",
-                }}>
-                  {stats.high_score}
-                </div>
-              </div>
-
-              {/* Average Score */}
-              <div style={{
-                background: "linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%)",
-                padding: "30px",
-                borderRadius: "16px",
-                textAlign: "center",
-                border: "2px solid #f5c6cb",
-                transition: "all 0.3s ease",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = "translateY(-5px)";
-                e.currentTarget.style.boxShadow = "0 8px 20px rgba(220, 53, 69, 0.2)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "none";
-              }}
-              >
-                <div style={{
-                  width: "70px",
-                  height: "70px",
-                  borderRadius: "50%",
-                  background: "linear-gradient(135deg, #dc3545 0%, #c82333 100%)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  margin: "0 auto 20px",
-                  fontSize: "2rem",
-                }}>
-                  📊
-                </div>
-                <div style={{
-                  fontSize: "1rem",
-                  color: "#721c24",
-                  fontWeight: "500",
-                  marginBottom: "10px",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.5px",
-                }}>
-                  Average Score
-                </div>
-                <div style={{
-                  fontSize: "3rem",
-                  fontWeight: "700",
-                  color: "#721c24",
-                }}>
-                  {calc(stats.total_pts, stats.total_games)}
-                </div>
-              </div>
+              ))}
             </div>
           ) : (
-            <div style={{
-              textAlign: "center",
-              padding: "60px 20px",
-              color: "#dc3545",
-              fontSize: "1.1rem",
-            }}>
+            <div style={{ textAlign:"center", padding:"40px 20px", color:"rgba(229,57,53,.75)", fontSize:"1rem" }}>
               ⚠️ Failed to load stats. Please try again later.
             </div>
           )}
         </div>
-      </div>
 
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
+      </div>
     </div>
   );
 }

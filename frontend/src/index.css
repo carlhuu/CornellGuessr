@@ -58,7 +58,8 @@ body {
     height: 100%;
     margin: 0;
     line-height: 1.5;
-    color: #121212;
+    color: white;
+    background: #090912;
 }
 textarea,
 input,
@@ -466,3 +467,72 @@ i {
   margin: 0.5rem 0;
 }
 
+
+/* ─── CornellGuessr shared design system ─────────────────────────────── */
+@keyframes cg-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes cg-slide-up {
+  0%   { opacity: 0; transform: translateY(44px) scale(.96); }
+  65%  { transform: translateY(-5px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes cg-pop-in {
+  0%   { opacity: 0; transform: scale(.5) translateY(12px); }
+  65%  { transform: scale(1.08) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+@keyframes cg-pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229,57,53,.7), 0 0 10px rgba(229,57,53,.4); }
+  50%       { box-shadow: 0 0 0 6px rgba(229,57,53,0), 0 0 22px rgba(229,57,53,.9); }
+}
+@keyframes cg-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes cg-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cg-glow-pulse {
+  0%, 100% { opacity: .6; }
+  50%       { opacity: 1; }
+}
+
+.cg-title {
+  background: linear-gradient(90deg, #ff7070, #E53935, #ffaaaa, #E53935, #ff7070);
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: cg-shimmer 4s linear infinite;
+}
+.cg-page-enter   { animation: cg-fade-up .5s ease forwards; }
+.cg-result-enter { animation: cg-slide-up .6s cubic-bezier(.34,1.56,.64,1) forwards; }
+.cg-stat { opacity: 0; }
+.cg-stat:nth-child(1) { animation: cg-pop-in .5s cubic-bezier(.34,1.56,.64,1) .10s forwards; }
+.cg-stat:nth-child(2) { animation: cg-pop-in .5s cubic-bezier(.34,1.56,.64,1) .22s forwards; }
+.cg-stat:nth-child(3) { animation: cg-pop-in .5s cubic-bezier(.34,1.56,.64,1) .36s forwards; }
+.cg-dot-active { animation: cg-pulse-dot 2s ease-in-out infinite; }
+.cg-spinner {
+  width: 44px; height: 44px;
+  border: 3px solid rgba(255,255,255,.08);
+  border-top-color: #E53935;
+  border-radius: 50%;
+  animation: cg-spin .75s linear infinite;
+}
+.cg-btn {
+  transition: all .2s cubic-bezier(.34,1.56,.64,1);
+  position: relative;
+  overflow: hidden;
+}
+.cg-btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.14) 0%, transparent 55%);
+  pointer-events: none;
+}
+.cg-btn:hover:not(:disabled)  { transform: translateY(-3px) scale(1.03); }
+.cg-btn:active:not(:disabled) { transform: translateY(1px)  scale(.98); }
+.cg-card-3d { transition: transform .15s ease, box-shadow .15s ease; }
+.cg-guess-indicator { animation: cg-glow-pulse 1.8s ease-in-out infinite; }
