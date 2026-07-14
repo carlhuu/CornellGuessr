@@ -13,17 +13,17 @@ const steps = [
   {
     num: "01",
     title: "See the photo",
-    desc: "A single image from somewhere on Cornell's campus. No labels, no hints — just your memory.",
+    desc: "One picture from somewhere on campus. No labels, no building names, no help. Just whatever you actually remember.",
   },
   {
     num: "02",
     title: "Drop your pin",
-    desc: "Click the campus map exactly where you think the photo was taken.",
+    desc: "Click the map where you think it was taken. Second-guess yourself, then click somewhere else.",
   },
   {
     num: "03",
     title: "Score the round",
-    desc: "The closer your pin, the more points. Five rounds, one shot at a perfect 5,000.",
+    desc: "Closer pin, more points. You get five rounds, so 5,000 is the number to beat.",
   },
 ];
 
@@ -124,7 +124,7 @@ export default function HomePage() {
               maxWidth: 440,
               margin: "28px 0 0",
             }}>
-              You'll see a photo from somewhere on campus — Libe Slope, the depths of Duffield, a corner of the Botanic Gardens. Drop a pin. The closer you land, the more you score.
+              You get a photo from somewhere on campus. Could be Libe Slope, could be a random hallway in Duffield, could be some corner of the Botanic Gardens you've walked past a hundred times. Drop a pin where you think it is. Closer is better.
             </p>
             <div style={{ display: "flex", alignItems: "center", gap: 26, marginTop: 38 }}>
               <Link to="/play">
@@ -205,9 +205,9 @@ export default function HomePage() {
           maxWidth: 620,
           lineHeight: 1.08,
         }}>
-          Three steps.{" "}
-          <span style={{ fontStyle: "italic", color: "#B31B1B" }}>Five rounds.</span>{" "}
-          One very specific corner of upstate New York.
+          It's basically the whole game in{" "}
+          <span style={{ fontStyle: "italic", color: "#B31B1B" }}>three steps.</span>{" "}
+          No tutorial required.
         </h2>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 0 }}>
@@ -237,7 +237,7 @@ export default function HomePage() {
               ON THE BOARD
             </div>
             <h2 style={{ ...serif, fontSize: "clamp(28px,3.5vw,42px)", fontWeight: 500, letterSpacing: "-.02em", color: "#1B1A18", margin: 0 }}>
-              A few places you might land.
+              A few spots you might get.
             </h2>
           </div>
           <span style={{ ...sans, fontSize: 14, color: "#908d86" }}>20 locations and counting</span>
@@ -284,8 +284,8 @@ export default function HomePage() {
           color: "#1B1A18",
           margin: 0,
         }}>
-          "You walk past these buildings a thousand times.{" "}
-          <span style={{ fontStyle: "normal", color: "#B31B1B" }}>Now find out if you were ever really looking.</span>"
+          "You've walked past these buildings a thousand times.{" "}
+          <span style={{ fontStyle: "normal", color: "#B31B1B" }}>Turns out that doesn't mean you can place any of them.</span>"
         </p>
       </div>
 
@@ -304,10 +304,10 @@ export default function HomePage() {
         }}>
           <div style={{ position: "relative", zIndex: 2 }}>
             <h2 style={{ ...serif, fontSize: "clamp(28px,3.8vw,44px)", fontWeight: 500, color: "#F6F4EF", margin: 0, letterSpacing: "-.015em" }}>
-              Ready to find your way?
+              See how well you actually know this place.
             </h2>
             <p style={{ ...sans, fontSize: 16, color: "#9b978f", margin: "14px 0 0" }}>
-              Sign in with your Google account to start playing.
+              Sign in with Google and you're playing in about ten seconds.
             </p>
           </div>
           <Link to="/play" style={{ flexShrink: 0 }}>

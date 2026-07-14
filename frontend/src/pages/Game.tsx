@@ -234,10 +234,10 @@ const Game: React.FC = () => {
           <div style={{ padding: "60px 52px", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center" }}>
             <div style={{ ...mono, fontSize: 12, letterSpacing: ".2em", color: "#B31B1B", marginBottom: 18 }}>SIGN IN TO PLAY</div>
             <h2 style={{ ...serif, fontSize: "clamp(28px,3.5vw,38px)", fontWeight: 600, lineHeight: 1.06, letterSpacing: "-.02em", color: "#1B1A18", margin: 0 }}>
-              An account keeps<br />score for you.
+              Sign in and<br />let's play.
             </h2>
             <p style={{ ...sans, fontSize: 15, lineHeight: 1.65, color: "#5c5953", maxWidth: 340, margin: "18px 0 32px" }}>
-              CornellGuessr saves every game to your profile so you can track your best runs over time. Sign in with your Cornell Google account to play.
+              Every game you play gets saved to your profile, so you've got a running record of your best (and worst) scores. Use your Cornell Google account to get in.
             </p>
             <button
               className="cg-btn"
@@ -254,7 +254,7 @@ const Game: React.FC = () => {
               Continue with Google
             </button>
             <span style={{ ...sans, fontSize: 13, color: "#a8a49c", marginTop: 18 }}>
-              We only use this to save your games. Nothing else.
+              Just for saving your games. We're not doing anything else with it.
             </span>
           </div>
         </div>
@@ -282,10 +282,10 @@ const Game: React.FC = () => {
           <div style={{ padding: "60px 52px", display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "center" }}>
             <div style={{ ...mono, fontSize: 12, letterSpacing: ".2em", color: "#B31B1B", marginBottom: 18 }}>NEW GAME · 5 ROUNDS</div>
             <h2 style={{ ...serif, fontSize: "clamp(32px,3.5vw,42px)", fontWeight: 600, lineHeight: 1.06, letterSpacing: "-.02em", color: "#1B1A18", margin: 0 }}>
-              Find your way<br />around Cornell.
+              Five photos.<br />How well do you know it?
             </h2>
             <p style={{ ...sans, fontSize: 15, lineHeight: 1.65, color: "#5c5953", maxWidth: 340, margin: "18px 0 32px" }}>
-              You'll get five photos from around campus. Drop a pin for each — closer guesses score more.
+              Five spots from around campus, one at a time. Drop a pin for each one. The closer you get, the more points you walk away with.
             </p>
             <button
               className="cg-btn"

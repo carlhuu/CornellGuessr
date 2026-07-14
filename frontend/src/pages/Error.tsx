@@ -37,10 +37,10 @@ const ErrorPage = () => {
           fontSize: "2rem", margin: "0 auto 28px",
         }}>⚠️</div>
         <h1 style={{ fontSize: "2.2rem", fontWeight: 800, color: "white", marginBottom: 12, letterSpacing: "-.02em" }}>
-          Oops!
+          Well, this is off the map.
         </h1>
         <p style={{ fontSize: "1rem", color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginBottom: 8 }}>
-          Sorry, an unexpected error has occurred.
+          Something broke and we're not totally sure what. Head back and try again.
         </p>
         <p style={{ fontSize: ".9rem", color: "rgba(229,57,53,.7)", fontStyle: "italic", marginBottom: 36 }}>
           {error.statusText || error.message}

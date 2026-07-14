@@ -98,7 +98,7 @@ export default function Profile() {
             Your profile
           </h1>
           <p style={{ ...sans, fontSize: 15, color: "#5c5953", lineHeight: 1.65, marginBottom: 36 }}>
-            Sign in with your Cornell Google account to see your stats and game history.
+            Sign in with your Cornell Google account and your stats and past games show up here.
           </p>
           <button
             className="cg-btn"
@@ -124,7 +124,7 @@ export default function Profile() {
             Continue with Google
           </button>
           <span style={{ ...sans, fontSize: 13, color: "#a8a49c", display: "block", marginTop: 18 }}>
-            We only use this to save your games. Nothing else.
+            Just for saving your games. We're not doing anything else with it.
           </span>
         </div>
       </div>
@@ -211,7 +211,7 @@ export default function Profile() {
               GAMES PLAYED
             </div>
             <div style={{ ...serif, fontSize: 42, fontWeight: 600, color: "#1B1A18", lineHeight: 1 }}>
-              {stats?.total_games ?? "—"}
+              {stats?.total_games ?? "-"}
             </div>
           </div>
 
@@ -225,7 +225,7 @@ export default function Profile() {
               BEST SCORE
             </div>
             <div style={{ ...serif, fontSize: 42, fontWeight: 600, color: "#B31B1B", lineHeight: 1 }}>
-              {stats ? stats.high_score.toLocaleString() : "—"}
+              {stats ? stats.high_score.toLocaleString() : "-"}
             </div>
           </div>
 
@@ -239,7 +239,7 @@ export default function Profile() {
               AVERAGE SCORE
             </div>
             <div style={{ ...serif, fontSize: 42, fontWeight: 600, color: "#1B1A18", lineHeight: 1 }}>
-              {stats ? avgScore(stats).toLocaleString() : "—"}
+              {stats ? avgScore(stats).toLocaleString() : "-"}
             </div>
           </div>
         </div>
@@ -275,7 +275,7 @@ export default function Profile() {
           }}>
             <div style={{ ...mono, fontSize: 12, letterSpacing: ".14em", color: "#908d86", marginBottom: 16 }}>NO GAMES YET</div>
             <p style={{ ...sans, fontSize: 16, color: "#5c5953", margin: 0 }}>
-              Play your first game to start building your history.
+              Nothing here yet. Play a round and it'll show up.
             </p>
           </div>
         ) : (
